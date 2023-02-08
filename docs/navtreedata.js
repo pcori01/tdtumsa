@@ -22,26 +22,26 @@ for the JavaScript code in this file
 */
 var NAVTREE =
 [
-  [ "TDTUmsa", "index.html", [
+  [ "TDT Umsa", "index.html", [
     [ "tdtumsa", "md__r_e_a_d_m_e.html", null ],
-    [ "Classes", "annotated.html", [
-      [ "Class List", "annotated.html", "annotated_dup" ],
-      [ "Class Index", "classes.html", null ],
-      [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
-      [ "Class Members", "functions.html", [
-        [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", null ],
+    [ "Clases", "annotated.html", [
+      [ "Lista de clases", "annotated.html", "annotated_dup" ],
+      [ "Índice de clases", "classes.html", null ],
+      [ "Jerarquía de la clase", "hierarchy.html", "hierarchy" ],
+      [ "Miembros de las clases", "functions.html", [
+        [ "Todo", "functions.html", "functions_dup" ],
+        [ "Funciones", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", "functions_vars" ],
-        [ "Enumerations", "functions_enum.html", null ],
-        [ "Enumerator", "functions_eval.html", null ],
-        [ "Properties", "functions_prop.html", null ]
+        [ "Enumeraciones", "functions_enum.html", null ],
+        [ "Valores de enumeraciones", "functions_eval.html", null ],
+        [ "Propiedades", "functions_prop.html", null ]
       ] ]
     ] ],
-    [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ],
-      [ "File Members", "globals.html", [
-        [ "All", "globals.html", null ],
-        [ "Functions", "globals_func.html", null ]
+    [ "Archivos", "files.html", [
+      [ "Lista de archivos", "files.html", "files_dup" ],
+      [ "Miembros de los ficheros", "globals.html", [
+        [ "Todo", "globals.html", null ],
+        [ "Funciones", "globals_func.html", null ]
       ] ]
     ] ]
   ] ]
@@ -53,5 +53,5 @@ var NAVTREEINDEX =
 "class_mux_page.html#ae74e34650b4c6560f8ee9a4643f46872"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click en deshabilitar sincronización';
+var SYNCOFFMSG = 'click en habilitar sincronización';

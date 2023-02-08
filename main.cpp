@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
         if (translator->load(translatorFileName, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
             app.installTranslator(translator);
     #endif
-    app.setWindowIcon(QIcon(":/images/icon.ico"));
+    app.setWindowIcon(QIcon(":/images/logo.svg"));
 
     Tdtumsa wizard;
     wizard.show();

@@ -1,4 +1,4 @@
- #include <QtWidgets>
+//#include <QtWidgets>
 
 #include "tdtumsa.h"
 
@@ -73,8 +73,6 @@ PlanPage::PlanPage(QWidget *parent)
                 QString namefield = "option"+QVariant(i).toString();
                 registerField("option"+QVariant(i).toString(), optionRadioButton[i]);
            }
-
-
 
     optionRadioButton[0]->setText(tr("1 Servicio Full HD (p)"));
     optionRadioButton[0]->setChecked(true);
@@ -549,7 +547,7 @@ MuxPage::MuxPage(QWidget *parent)
                    "Tenga en cuenta que algunos valores están restringidos y/o se modificaran automaticamente"));
 
     QStringList TabText, PMTStreamLoopText[5];
-    TabText << "PAT" << "NIT" << "SDT"
+    TabText << "PAT" << "NIT" << "SDT" << "TOT"
             << "PMT1"<<"EIT1"<<"AIT1"<<"PMT2"<<"EIT2"<<"AIT2"<<"PMT3"<<"EIT3"<<"AIT3"<<"PMT4"<<"EIT4"<<"AIT4"<<"PMT5"<<"EIT5"<<"AIT5";
 
     PMTStreamLoopText[0]<<"Stream Type Video"<<"PID Video";
@@ -563,6 +561,7 @@ MuxPage::MuxPage(QWidget *parent)
     QStringList additional_ginga_j_infoItemText = {"transmission_format","document_resolution",
                                                    "organization_id","application_id","carousel_id"};
     QStringList SDTServiceLoopElementText = {"service ID","EIT_schedule_flag","EIT_present_following_flag","running_status","free_CA_mode"};
+
     QList<int> SDTServiceLoopElementValues = {1,0,0,4,0};
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -672,6 +671,24 @@ MuxPage::MuxPage(QWidget *parent)
     SDTServiceLoop=new SectionLoop(this,tr("Service Loop"));
     layoutTab[2]->addWidget(SDTServiceLoop);
 
+    TOT_Layout = new QFormLayout;
+    TOT_Label = new QList<QLabel*>;
+    foreach(QString str, TOT_items){
+        TOT_Label->append(new QLabel("<span style=\"color:#ff0000\"><strong>ESTE DATO SERA AGREGADO AUTOMATICAMENTE AL EJECUTAR DE ACUERDO AL SISTEMA</strong></span>"));
+        TOT_Layout->addRow(str,TOT_Label->last());
+        TOT_Label->last()->setTextFormat(Qt::RichText);
+        TOT_Label->last()->setFrameStyle(QFrame::Panel | QFrame::Plain);
+    }
+    TOT_Widget = new QWidget;
+    TOT_Widget->setLayout(TOT_Layout);
+    layoutTab[3]->addWidget(TOT_Widget);
+
+    TOT_descriptor_Loop = new SectionLoop(this,tr("descriptor_loop"));
+    layoutTab[3]->addWidget(TOT_descriptor_Loop);
+    TOT_Label->append(new QLabel("<span style=\"color:#ff0000\"><strong>NO DESCRIPTORES VALIDOS PARA BOLIVIA, AL NO TENER HORARIO DE INVIERNO</strong></span>"));
+    TOT_descriptor_Loop->layout()->addWidget(TOT_Label->last());
+    TOT_Label->last()->setTextFormat(Qt::RichText);
+    TOT_Label->last()->setFrameStyle(QFrame::Panel | QFrame::Plain);
 
     connect(PATTSID,SIGNAL(valueChanged(int)),
                     NITTSID,SLOT(setValue(int)));
@@ -757,14 +774,15 @@ MuxPage::MuxPage(QWidget *parent)
         PMTProgramNumber[i]->setRange(0x30,0x1FC7);
         registerField("PID PMT"+QVariant(i).toString(),PMTProgramNumber[i],"value");
 
-        layoutTab[3*i+3]->addWidget(PMTProgramNumber[i]);
+        layoutTab[3*i+4]->addWidget(PMTProgramNumber[i]);
 
         PMTStreamLoop[i] = new SectionLoop(this,"Stream Loop");
         PMTVideo[i] = new SectionDescriptor(this,"Video");
         PMTAudio[i] = new SectionDescriptor(this,"Audio");
         PMTAIT[i] = new SectionLoop(this,"AIT Stream");
         PMTDSMCC[i] = new SectionLoop(this,"DSMCC Stream");
-        layoutTab[3*i+3]->addWidget(PMTStreamLoop[i]);
+
+        layoutTab[3*i+4]->addWidget(PMTStreamLoop[i]);
         PMTStreamLoop[i]->layout()->addWidget(PMTVideo[i]);
         PMTStreamLoop[i]->layout()->addWidget(PMTAudio[i]);
         PMTStreamLoop[i]->layout()->addWidget(PMTAIT[i]);
@@ -794,8 +812,6 @@ MuxPage::MuxPage(QWidget *parent)
         PMTAITWidgetItem[i][0]->setRange(0x05,0x05);
         PMTAITWidgetItem[i][1]->setRange(0x30,0x1FC7);
         PMTAITWidgetItem[i][1]->setValue(0x7D0+i);
-
-
 
         PMTAIT[i]->layout()->addWidget(PMTAITItem[i]);
 
@@ -856,7 +872,6 @@ MuxPage::MuxPage(QWidget *parent)
 
         }
 
-
         PMTDSMCCdata_component_descriptor[i] = new SectionDescriptor(this,"data_component_descriptor");
         PMTDSMCCelement_info_descriptor_loop[i]->layout()->addWidget(PMTDSMCCdata_component_descriptor[i]);
 
@@ -876,11 +891,68 @@ MuxPage::MuxPage(QWidget *parent)
         }
 
         layoutTab[3*i+5]->setSizeConstraint(QLayout::SetFixedSize);
+
+        EIT_loop[i]=new SectionLoop(this,tr("EIT Actual"));
+        layoutTab[3*i+5]->addWidget(EIT_loop[i]);
+
+        EIT_loop_item[i] = new SectionDescriptor;
+        EIT_loop[i]->layout()->addWidget(EIT_loop_item[i]);
+
+        EITelements[i]= new QList<LabelHexSpinBox*>;
+        foreach (const IntParam &item, EIT_items) {
+            EITelements[i]->append(new LabelHexSpinBox(this,item.name));
+            EIT_loop_item[i]->layout()->addWidget(EITelements[i]->last());
+        }
+
+        EIT_event_loop[i] = new SectionLoop(this,tr("Event Loop"));
+        EIT_loop[i]->layout()->addWidget(EIT_event_loop[i]);
+
+        EIT_event_loop_item[i]= new SectionDescriptor(this,tr("EIT Event Loop item"));
+        EIT_event_loop[i]->layout()->addWidget(EIT_event_loop_item[i]);
+
+        EIT_event_loop_widgets[i]= new QList<LabelHexSpinBox*>;
+        foreach(IntParam item, EIT_event_loop_items){
+            EIT_event_loop_widgets[i]->append(new LabelHexSpinBox(this,item.name,item.type));
+            EIT_event_loop_widgets[i]->last()->setRange(item.min,item.max);
+            EIT_event_loop_widgets[i]->last()->setValue(item.value);
+            EIT_event_loop_item[i]->layout()->addWidget(EIT_event_loop_widgets[i]->last());
+        }
+
+        EIT_follow_loop[i]=new SectionLoop(this,tr("EIT Siguiente"));
+        layoutTab[3*i+5]->addWidget(EIT_follow_loop[i]);
+
+        EIT_follow_loop_item[i] = new ElementSectionDescriptor;
+        EIT_follow_loop[i]->layout()->addWidget(EIT_follow_loop_item[i]);
+
+        EIT_follow_elements[i]= new QList<LabelHexSpinBox*>;
+        foreach (const IntParam &item, EIT_follow_items) {
+            EIT_follow_elements[i]->append(new LabelHexSpinBox(this,item.name));
+            EIT_follow_elements[i]->last()->setRange(item.min,item.max);
+            EIT_follow_loop_item[i]->layout()->addWidget(EIT_follow_elements[i]->last());
+        }
+
+        EIT_follow_event_loop[i] = new SectionLoop(this,tr("Event Loop"));
+        EIT_follow_loop[i]->layout()->addWidget(EIT_follow_event_loop[i]);
+
+        EIT_follow_event_loop_item[i]= new SectionDescriptor(this,tr("EIT Event Loop item"));
+        EIT_follow_event_loop[i]->layout()->addWidget(EIT_follow_event_loop_item[i]);
+
+        EIT_follow_event_loop_widgets[i]= new QList<LabelHexSpinBox*>;
+        foreach(IntParam item, EIT_follow_event_loop_items){
+            EIT_follow_event_loop_widgets[i]->append(new LabelHexSpinBox(this,item.name,item.type));
+            EIT_follow_event_loop_widgets[i]->last()->setRange(item.min,item.max);
+            EIT_follow_event_loop_widgets[i]->last()->setValue(item.value);
+            EIT_follow_event_loop_item[i]->layout()->addWidget(EIT_follow_event_loop_widgets[i]->last());
+        }
+
+
+        layoutTab[3*i+6]->setSizeConstraint(QLayout::SetFixedSize);
+
         AITApptype[i]=new LabelHexSpinBox(this,"App Type");
-        layoutTab[3*i+5]->addWidget(AITApptype[i]);
+        layoutTab[3*i+6]->addWidget(AITApptype[i]);
 
         AITApploop[i]=new SectionLoop(this,tr("Application Loop"));
-        layoutTab[3*i+5]->addWidget(AITApploop[i]);
+        layoutTab[3*i+6]->addWidget(AITApploop[i]);
 
         AITApp[i]=new SectionLoop(this,tr("Aplicación de Servicio ")+QString::number(i));
         AITApploop[i]->layout()->addWidget(AITApp[i]);
@@ -888,26 +960,29 @@ MuxPage::MuxPage(QWidget *parent)
         AITAppElementSection[i]= new ElementSectionDescriptor(this);
         AITApp[i]->layout()->addWidget(AITAppElementSection[i]);
 
-        AITOrganizationID[i]= new LabelHexSpinBox(this,tr("Oranization ID"));
-        AITAppElementSection[i]->layout()->addWidget(AITOrganizationID[i]);
-        AITAppID[i]= new LabelHexSpinBox(this,tr("Application ID"));
-        AITAppElementSection[i]->layout()->addWidget(AITAppID[i]);
-        AITAPPControlCode[i]= new LabelHexSpinBox(this,tr("Application Control Code"));
-        AITAppElementSection[i]->layout()->addWidget(AITAPPControlCode[i]);
+        AIT_app_item_widgets[i] = new QList<LabelHexSpinBox*>;
+        foreach(IntParam item, AIT_app_items){
+            AIT_app_item_widgets[i]->append(new LabelHexSpinBox(this,item.name,item.type));
+            AIT_app_item_widgets[i]->last()->setRange(item.min,item.max);
+            AIT_app_item_widgets[i]->last()->setValue(item.value);
+            AITAppElementSection[i]->layout()->addWidget(AIT_app_item_widgets[i]->last());
+        }
+
 
         AITApp_descriptors_loop[i]=new SectionLoop(this,tr("Application_desctiptor_loop"));
+
         AITApp[i]->layout()->addWidget(AITApp_descriptors_loop[i]);
         AITTransportProtocolControlDesc[i]= new SectionDescriptor(this,tr("Transport_Protocol_Control_Descriptor"));
-
         AITApp_descriptors_loop[i]->layout()->addWidget(AITTransportProtocolControlDesc[i]);
-        AITprotocol_id[i]= new LabelHexSpinBox(this,tr("protocol_id"));
-        AITTransportProtocolControlDesc[i]->layout()->addWidget(AITprotocol_id[i]);
-        AITtransport_protocol_label[i]= new LabelHexSpinBox(this,tr("transport_protocol_label"));
-        AITTransportProtocolControlDesc[i]->layout()->addWidget(AITtransport_protocol_label[i]);
-        AITremote_connection[i]= new LabelHexSpinBox(this,tr("remote_connection"));
-        AITTransportProtocolControlDesc[i]->layout()->addWidget(AITremote_connection[i]);
-        AITcomponent_tag[i]= new LabelHexSpinBox(this,tr("component_tag"));
-        AITTransportProtocolControlDesc[i]->layout()->addWidget(AITcomponent_tag[i]);
+
+        AITTransportProtocolControlDesc_item_widgets[i] = new QList<LabelHexSpinBox*>;
+        foreach(IntParam item, AITTransportProtocolControlDesc_items){
+            AITTransportProtocolControlDesc_item_widgets[i]->append(new LabelHexSpinBox(this,item.name,item.type));
+            AITTransportProtocolControlDesc_item_widgets[i]->last()->setRange(item.min,item.max);
+            AITTransportProtocolControlDesc_item_widgets[i]->last()->setValue(item.value);
+            AITTransportProtocolControlDesc[i]->layout()->addWidget(AITTransportProtocolControlDesc_item_widgets[i]->last());
+        }
+
 
         AITAppDesc[i]= new SectionDescriptor(this,tr("Application_Descriptor"));
         AITApp_descriptors_loop[i]->layout()->addWidget(AITAppDesc[i]);
@@ -950,7 +1025,10 @@ MuxPage::MuxPage(QWidget *parent)
                         SDTServiceLoopElementWidget[i][0],SLOT(setValue(int)));
 
         connect(SDTServiceLoopElementWidget[i][0],SIGNAL(valueChanged(int)),
-                        PATServiceID[i],SLOT(setValue(int)));
+                        EITelements[i]->at(1),SLOT(setValue(int)));
+
+        connect(EITelements[i]->at(1),SIGNAL(valueChanged(int)),
+                                PATServiceID[i],SLOT(setValue(int)));
 
         connect(PMTProgramNumber[i],SIGNAL(valueChanged(int)),
                         PATServicePID[i],SLOT(setValue(int)));
@@ -989,6 +1067,7 @@ void MuxPage::initializePage(){
     TabText[2]<<"One-Seg"<<"HD 1"<<"HD 2";
     TabText[3]<<"One-Seg"<<"HD"<<"SD 1"<<"SD 2";
     TabText[4]<<"One-Seg"<<"SD 1"<<"SD 2"<<"SD 3"<<"SD 4";
+
     for(int it=0;it<5;it++)
     {
         if(field("option"+QVariant(it).toString()).toBool())
@@ -999,9 +1078,10 @@ void MuxPage::initializePage(){
 
     nservice = TabText[index].size();
 
-    while(MuxTab->count()>3)
+    while(MuxTab->count()>4)
     {
         MuxTab->removeTab(MuxTab->count()-1);
+
     }
 
     for(int it=0;it<5;it++)
@@ -1013,9 +1093,9 @@ void MuxPage::initializePage(){
 
     for(int it=0;it<nservice;it++)
     {
-        MuxTab->addTab(scrollArea[3*it+3], {"PMT "+TabText[index][it]});
-        MuxTab->addTab(scrollArea[3*it+4], {"EIT "+TabText[index][it]});
-        MuxTab->addTab(scrollArea[3*it+5], {"AIT "+TabText[index][it]});
+        MuxTab->addTab(scrollArea[3*it+4], {"PMT "+TabText[index][it]});
+        MuxTab->addTab(scrollArea[3*it+5], {"EIT "+TabText[index][it]});
+        MuxTab->addTab(scrollArea[3*it+6], {"AIT "+TabText[index][it]});
         NITService[it]->show();
         PATprogram_loop_item[it]->setTitle("Servicio "+TabText[index][it]);
         PATprogram_loop_item[it]->show();
@@ -1031,7 +1111,7 @@ void MuxPage::initializePage(){
     {      
         if(!field("GingaApp"+QVariant(it).toString()).toBool())
         {
-            MuxTab->removeTab(3*it+5);
+            MuxTab->removeTab(3*it+6);
             PMTAIT[it]->hide();
             PMTDSMCC[it]->hide();
         }
@@ -1039,14 +1119,14 @@ void MuxPage::initializePage(){
 
     if(!field("1seg").toBool())
     {
+        MuxTab->removeTab(5);
         MuxTab->removeTab(4);
-        MuxTab->removeTab(3);
         NITService[0]->hide();
         PATprogram_loop_item[0]->hide();
         SDTServiceLoopItem[0]->hide();
-        if(MuxTab->tabText(3).contains({"AIT "+TabText[index][0]}))
+        if(MuxTab->tabText(4).contains({"AIT "+TabText[index][0]}))
         {
-            MuxTab->removeTab(3);
+            MuxTab->removeTab(4);
         }
     }
 }
@@ -1072,8 +1152,10 @@ void MuxPage::MuxChanges(int value)
             aux =(0x07&(PATServiceID[i]->Value()));
             PATServiceID[i]->setRange(min,max);
             NITServiceID[i]->setRange(min,max);
+            EITelements[i]->at(1)->setRange(min,max);
             SDTServiceLoopElementWidget[i][0]->setRange(min,max);
             PATServiceID[i]->setValue(((finalvalue)&(0xFFE7))|aux);
+
         }
 
     }
@@ -1249,14 +1331,12 @@ void FinalPage::initializePage()
     #ifdef Q_OS_LINUX
         strCodeMux.append("cd /home/"+uname+"/tdt\n");
     #endif
+    strCodeMux.append("python tables.py\n");
     QString PathVideo, LetterDisk;
     strCodeMux.append("ffmpeg -y ");
     for(int it=0;it<(nservice+oneseg-1);it++){
 
         PathVideo =field("File"+QVariant(it-oneseg+1).toString()).toString();
-        #ifdef Q_OS_WIN
-            PathVideo = "/mnt/"+PathVideo.left(1).toLower()+PathVideo.mid(PathVideo.indexOf("/"));
-        #endif
         strCodeMux.append("-i \""+PathVideo+"\" ");
     }
     for(int it=0;it<(nservice+oneseg-1);it++)
@@ -1304,8 +1384,8 @@ void FinalPage::initializePage()
     strCodeMux.append("-f mpegts -mpegts_flags latm -mpegts_service_type digital_tv -muxrate "+QString("%1").arg(bitratetotal)+" -y AVTS.ts\n");
 
 
-    strCodeMux.append("tsmask AVTS.ts -0 -17 -4096 > filterAVTS.ts\n");
-    strCodeMux.append("python tables.py\n");
+    strCodeMux.append("tsmodder AVTS.ts +0 null.ts +17 null.ts +4096 null.ts > filterAVTS.ts\n");
+
 
     for(int it=0;it<(nservice+oneseg-1);it++){
         auxString1=QVariant(it).toString();
@@ -1316,7 +1396,7 @@ void FinalPage::initializePage()
         }
     }
 
-    strCodeMux.append("tscbrmuxer b:15040 pat.ts b:6016 sdt.ts b:3008 nit.ts ");
+    strCodeMux.append("tscbrmuxer b:15040 pat.ts b:3008 sdt.ts b:3008 nit.ts b:1504 tot.ts b:3008 eit.ts ");
     bitratetotal=0;
     for(int it=0;it<(nservice+oneseg-1);it++){
         auxString1=QVariant(it).toString();
@@ -1338,8 +1418,8 @@ void FinalPage::initializePage()
     }
     bitratetotal=bitratetotal*1.15;
     strCodeMux.append(QString("c:%1 filterAVTS.ts o:29958294 null.ts > preout.ts\n").arg(bitratetotal));
-
-    strCodeMux.append("tspcrstamp preout.ts 29958294 > output.ts\n");
+    strCodeMux.append("tstdt preout.ts > preout_fixtime.ts\n");
+    strCodeMux.append("tspcrstamp preout_fixtime.ts 29958294 > output.ts\n");
 
 
 
@@ -1349,11 +1429,13 @@ void FinalPage::initializePage()
     strTables.append("#!/usr/bin/env python\n\n"
                      "#coding: utf8\n\n"
                      "import os\n"
+                     "import time\n"
                      "from dvbobjects.MHP.AIT import *\n"
                      "from dvbobjects.MHP.Descriptors import *\n"
                      "from dvbobjects.PSI.PAT import *\n"
                      "from dvbobjects.PSI.NIT import *\n"
                      "from dvbobjects.PSI.SDT import *\n"
+                     "from dvbobjects.PSI.TOT import *\n"
                      "from dvbobjects.PSI.PMT import *\n"
                      "from dvbobjects.PSI.EIT import *\n"
                      "from dvbobjects.SBTVD.Descriptors import *\n");
@@ -1523,6 +1605,22 @@ void FinalPage::initializePage()
                      "out = open(\"./sdt.sec\", \"wb\")\n"
                      "out.close\n"
                      "os.system(\"sec2ts 17 < ./sdt.sec > ./sdt.ts\")\n\n");
+    strTables.append("current_time = time.gmtime()\n\n"
+                     "tot = time_offset_section(\n"
+                     "        year = current_time[0]-1900,\n"
+                     "        month = current_time[1],\n"
+                     "        day = current_time[2],\n"
+                     "        hour = ((current_time[3] / 10) * 16) + (current_time[3] % 10), # it requires decimal time in hex... like 0x22 for 10 p.m.\n"
+                     "        minute = ((current_time[4] / 10) * 16) + (current_time[4] % 10),\n"
+                     "        second = ((current_time[5] / 10) * 16) + (current_time[5] % 10),\n"
+                     "        descriptor_loop = [],\n"
+                     ")\n\n"
+                     "out = open(\"./tot.sec\", \"wb\")\n"
+                     "out.write(tot.pack())\n"
+                     "out.close\n"
+                     "out = open(\"./tot.sec\", \"wb\") # python   flush bug\n"
+                     "out.close\n"
+                     "os.system('sec2ts 20 < ./tot.sec > ./tot.ts')\n\n");
 
     QStringList profile_and_level[2], AAC_type[3];
     profile_and_level[0]=QStringList({"0x29","0x2A"});
@@ -1642,9 +1740,9 @@ void FinalPage::initializePage()
     {
         auxString1=QVariant(it).toString();
         auxString2=QVariant(it-oneseg+1).toString();
-        strTables.append("eit = event_information_section(\n"
+        strTables.append("eit"+auxString1+" = event_information_section(\n"
                          "	table_id = EIT_ACTUAL_TS_PRESENT_FOLLOWING,\n"
-                         "	service_id = tvd_service_id_"+QVariant(it).toString()+",\n"
+                         "	service_id = tvd_service_id_"+auxString1+",\n"
                          "	transport_stream_id = tvd_ts_id,\n"
                          "	original_network_id = tvd_orig_network_id,\n"
                          "        event_loop = [\n"
@@ -1663,7 +1761,7 @@ void FinalPage::initializePage()
                          "		free_CA_mode = 0, # 0 means service is not scrambled, 1 means at least a stream is scrambled\n"
                          "		event_descriptor_loop = [\n"
                          "		    short_event_descriptor (\n"
-                         "			ISO639_language_code = \"ITA\", \n"
+                         "			ISO639_language_code = \"SPA\", \n"
                          "			event_name = \"epg event name\",\n"
                          "			text = \"this is an epg event text example\",\n"
                          "		    ),\n"
@@ -1678,7 +1776,7 @@ void FinalPage::initializePage()
                          "        )\n"
                          "\n"
                          "\n"
-                         "eit_follow = event_information_section(\n"
+                         "eit_follow"+auxString1+" = event_information_section(\n"
                          "	table_id = EIT_ACTUAL_TS_PRESENT_FOLLOWING,\n"
                          "	service_id = tvd_service_id_"+QVariant(it).toString()+",\n"
                          "	transport_stream_id = tvd_ts_id,\n"
@@ -1712,19 +1810,19 @@ void FinalPage::initializePage()
                          "        last_section_number = 1, \n"
                          "        )\n");
 
-        strTables.append("out = open(\"./eit.sec\", \"wb\")\n"
-                         "out.write(eit.pack())\n"
+        strTables.append("out = open(\"./eit"+auxString1+".sec\", \"wb\")\n"
+                         "out.write(eit"+auxString1+".pack())\n"
                          "out.close\n"
-                         "out = open(\"./eit.sec\", \"wb\") # python   flush bug\n"
+                         "out = open(\"./eit"+auxString1+".sec\", \"wb\") # python   flush bug\n"
                          "out.close\n"
-                         "os.system('sec2ts 18 < ./eit.sec > ./firsteit.ts')\n"
+                         "os.system('sec2ts 18 "+QString((it==0)?"-s":" ")+" < ./eit"+auxString1+".sec "+QString((it==0)?">":">>")+" ./eit.ts')\n"
                           "\n"
-                         "out = open(\"./eit_follow.sec\", \"wb\")\n"
-                         "out.write(eit_follow.pack())\n"
+                         "out = open(\"./eit_follow"+auxString1+".sec\", \"wb\")\n"
+                         "out.write(eit_follow"+auxString1+".pack())\n"
                          "out.close\n"
-                         "out = open(\"./eit_follow.sec\", \"wb\") # python   flush bug\n"
+                         "out = open(\"./eit_follow"+auxString1+".sec\", \"wb\") # python   flush bug\n"
                          "out.close\n"
-                         "os.system('sec2ts 18 < ./eit_follow.sec >> ./firsteit.ts')\n");
+                         "os.system('sec2ts 18 < ./eit_follow"+auxString1+".sec >> ./eit.ts')\n");
     }
 
 

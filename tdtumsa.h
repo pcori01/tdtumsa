@@ -3,7 +3,9 @@
 
 #include <QWizard>
 #include <QtWidgets>
-//#include <QVariant>
+#include <QVariant>
+#include <QDate>
+#include <QTime>
 //#include <QDomDocument>
 //#include <QXmlStreamWriter>
 //#include <QMap>
@@ -29,6 +31,7 @@ class QSpinBox;
 class QComboBox;
 class QGroupBox;
 class QSpacerItem;
+
 QT_END_NAMESPACE
 
 class QRegExpValidator;
@@ -307,11 +310,18 @@ public:
     void cleanupPage() override;
 
 private:
+    struct IntParam {
+        QString name;
+        int value;
+        int type;
+        int min;
+        int max;
+    };
     QTabWidget *MuxTab; /**< TODO: describe */
-    QVBoxLayout *layoutTab[10]; /**< TODO: describe */
-    QWidget *tabWidget[16]; /**< TODO: describe */
+    QVBoxLayout *layoutTab[18]; /**< TODO: describe */
+    QWidget *tabWidget[18]; /**< TODO: describe */
 
-    QScrollArea *scrollArea[16];
+    QScrollArea *scrollArea[18];
 
     QGroupBox *PATService[5]; /**< TODO: describe */
     QGridLayout *PATlayout[5]; /**< TODO: describe */
@@ -358,6 +368,11 @@ private:
     LabelHexSpinBox *remote_control_key_id; /**< TODO: describe */
     LabelLineEdit *ts_name; /**< TODO: describe */
 
+    QFormLayout *TOT_Layout;
+    QWidget *TOT_Widget;
+    QStringList TOT_items={"year","month","day","hour","minute","second"};
+    QList<QLabel*> *TOT_Label;
+    SectionLoop *TOT_descriptor_Loop;
 
     ElementSectionDescriptor *SDTItem;
     LabelHexSpinBox *SDTTSID;
@@ -449,6 +464,12 @@ private:
     SectionLoop *AITApp[5];
     ElementSectionDescriptor *AITAppElementSection[5];
 
+    QList<LabelHexSpinBox*> *AIT_app_item_widgets[5];
+    QList<IntParam> AIT_app_items = {{"Organization_ID",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E},
+                                    {"AppID",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
+                                    {"Application Control Code",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                    };
+
     LabelHexSpinBox *AITOrganizationID[5]; /**< TODO: describe */
     LabelHexSpinBox *AITAppID[5]; /**< TODO: describe */
     LabelHexSpinBox *AITAPPControlCode[5]; /**< TODO: describe */
@@ -456,6 +477,12 @@ private:
     SectionLoop *AITApp_descriptors_loop[5];
 
     SectionDescriptor *AITTransportProtocolControlDesc[5];
+    QList<LabelHexSpinBox*> *AITTransportProtocolControlDesc_item_widgets[5];
+    QList<IntParam> AITTransportProtocolControlDesc_items = {{"protocol_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E},
+                                                            {"transport_protocol_label",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
+                                                            {"remote_connection",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                                            {"component_tag",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                                            };
     LabelHexSpinBox *AITprotocol_id[5];
     LabelHexSpinBox *AITtransport_protocol_label[5];
     LabelHexSpinBox *AITremote_connection[5];
@@ -479,8 +506,61 @@ private:
     LabelLineEdit *class_path_extension[5];
     LabelLineEdit *initial_class[5];
 
-    QLayout *EITLayout[5];
+    SectionLoop *EIT_loop[5];
+    SectionDescriptor *EIT_loop_item[5];
+    QList<LabelHexSpinBox*> *EITelements[5];
+    QList<IntParam> EIT_items = {{"table_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E},
+                                 {"service_id",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
+                                 {"transport_stream_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                 {"original_network_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                };
 
+    SectionLoop *EIT_event_loop[5];
+    SectionDescriptor *EIT_event_loop_item[5];
+
+    QList<LabelHexSpinBox*> *EIT_event_loop_widgets[5];
+    QList<IntParam> EIT_event_loop_items = {{"event_id",1,LabelHexSpinBox::HEXSPINBOX,0,255},
+                                            {"start_year",QDate::currentDate().year()-1900,LabelHexSpinBox::SPINBOX,0,65535},
+                                            {"start_month",QDate::currentDate().month(),LabelHexSpinBox::SPINBOX,0,12},
+                                            {"start_day",QDate::currentDate().day(),LabelHexSpinBox::SPINBOX,0,31},
+                                            {"start_hours",QTime::currentTime().hour(),LabelHexSpinBox::SPINBOX,0,23},
+                                            {"start_minutes",0,LabelHexSpinBox::SPINBOX,0,59},
+                                            {"start_seconds",0,LabelHexSpinBox::SPINBOX,0,59},
+                                            {"duration_hours",0,LabelHexSpinBox::SPINBOX,0,23},
+                                            {"duration_minutes",30,LabelHexSpinBox::SPINBOX,0,59},
+                                            {"duration_seconds",0,LabelHexSpinBox::SPINBOX,0,59},
+                                            {"running_status",4,LabelHexSpinBox::HEXSPINBOX,0,7},
+                                            {"free_CA_mode",0,LabelHexSpinBox::HEXSPINBOX,0,0},
+                                           };
+
+    SectionLoop *EIT_follow_loop[5];
+    ElementSectionDescriptor *EIT_follow_loop_item[5];
+    QList<LabelHexSpinBox*> *EIT_follow_elements[5];
+    QList<IntParam> EIT_follow_items = {{"table_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E},
+                                 {"service_id",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
+                                 {"transport_stream_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                 {"original_network_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                };
+
+
+
+    SectionLoop *EIT_follow_event_loop[5];
+    SectionDescriptor *EIT_follow_event_loop_item[5];
+
+    QList<LabelHexSpinBox*> *EIT_follow_event_loop_widgets[5];
+    QList<IntParam> EIT_follow_event_loop_items = {{"event_id",1,LabelHexSpinBox::HEXSPINBOX,0,255},
+                                            {"start_year",QDate::currentDate().year()-1900,LabelHexSpinBox::SPINBOX,0,65535},
+                                            {"start_month",QDate::currentDate().month(),LabelHexSpinBox::SPINBOX,0,12},
+                                            {"start_day",QDate::currentDate().day(),LabelHexSpinBox::SPINBOX,0,31},
+                                            {"start_hours",QTime::currentTime().hour(),LabelHexSpinBox::SPINBOX,0,23},
+                                            {"start_minutes",0,LabelHexSpinBox::SPINBOX,0,59},
+                                            {"start_seconds",0,LabelHexSpinBox::SPINBOX,0,59},
+                                            {"duration_hours",0,LabelHexSpinBox::SPINBOX,0,23},
+                                            {"duration_minutes",30,LabelHexSpinBox::SPINBOX,0,59},
+                                            {"duration_seconds",0,LabelHexSpinBox::SPINBOX,0,59},
+                                            {"running_status",4,LabelHexSpinBox::HEXSPINBOX,0,7},
+                                            {"free_CA_mode",0,LabelHexSpinBox::HEXSPINBOX,0,0},
+                                           };
 
 public slots:
     /**

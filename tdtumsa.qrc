@@ -3,5 +3,6 @@
         <file>images/watermark.png</file>
         <file>images/logo.png</file>
         <file>images/icon.ico</file>
+        <file>images/logo.svg</file>
     </qresource>
 </RCC>

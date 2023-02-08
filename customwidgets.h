@@ -12,9 +12,10 @@ class LabelHexSpinBox : public QWidget
 
 public:
 
-    LabelHexSpinBox(QWidget *parent = nullptr,QString text=nullptr);
+    LabelHexSpinBox(QWidget *parent = nullptr,QString text=nullptr,int valuetype=0);
     void setRange(int,int);
-
+    const static int HEXSPINBOX = 0;
+    const static int SPINBOX = 1;
     int Value() const {
         return m_value;
     }
@@ -22,8 +23,10 @@ public:
 private:
 
     int m_value=0;
+    int type=0;
     QLabel *m_Label; /**< TODO: describe */
     HexSpinBox *m_HexSpinBox; /**< TODO: describe */
+    QSpinBox *m_QSpinBox;
     QHBoxLayout *m_HBoxLayout;
 
 signals:
@@ -34,7 +37,7 @@ public slots:
     {
         if(m_value!=value){
             m_value = value;
-            m_HexSpinBox->setValue(value);
+            (type==0)?m_HexSpinBox->setValue(value):m_QSpinBox->setValue(value);
             emit valueChanged(value);
         }
     }

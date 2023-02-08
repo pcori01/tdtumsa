@@ -21,14 +21,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 for the JavaScript code in this file
 */
 var menudata={children:[
-{text:"Main Page",url:"index.html"},
-{text:"Related Pages",url:"pages.html"},
-{text:"Classes",url:"annotated.html",children:[
-{text:"Class List",url:"annotated.html"},
-{text:"Class Index",url:"classes.html"},
-{text:"Class Hierarchy",url:"inherits.html"},
-{text:"Class Members",url:"functions.html",children:[
-{text:"All",url:"functions.html",children:[
+{text:"Página principal",url:"index.html"},
+{text:"Páginas relacionadas",url:"pages.html"},
+{text:"Clases",url:"annotated.html",children:[
+{text:"Lista de clases",url:"annotated.html"},
+{text:"Índice de clases",url:"classes.html"},
+{text:"Jerarquía de la clase",url:"inherits.html"},
+{text:"Miembros de las clases",url:"functions.html",children:[
+{text:"Todo",url:"functions.html",children:[
 {text:"a",url:"functions.html#index_a"},
 {text:"b",url:"functions_b.html#index_b"},
 {text:"c",url:"functions_c.html#index_c"},
@@ -48,7 +48,7 @@ var menudata={children:[
 {text:"s",url:"functions_s.html#index_s"},
 {text:"t",url:"functions_t.html#index_t"},
 {text:"v",url:"functions_v.html#index_v"}]},
-{text:"Functions",url:"functions_func.html",children:[
+{text:"Funciones",url:"functions_func.html",children:[
 {text:"a",url:"functions_func.html#index_a"},
 {text:"c",url:"functions_func.html#index_c"},
 {text:"d",url:"functions_func.html#index_d"},
@@ -84,11 +84,11 @@ var menudata={children:[
 {text:"s",url:"functions_vars_s.html#index_s"},
 {text:"t",url:"functions_vars_t.html#index_t"},
 {text:"v",url:"functions_vars_v.html#index_v"}]},
-{text:"Enumerations",url:"functions_enum.html"},
-{text:"Enumerator",url:"functions_eval.html"},
-{text:"Properties",url:"functions_prop.html"}]}]},
-{text:"Files",url:"files.html",children:[
-{text:"File List",url:"files.html"},
-{text:"File Members",url:"globals.html",children:[
-{text:"All",url:"globals.html"},
-{text:"Functions",url:"globals_func.html"}]}]}]}
+{text:"Enumeraciones",url:"functions_enum.html"},
+{text:"Valores de enumeraciones",url:"functions_eval.html"},
+{text:"Propiedades",url:"functions_prop.html"}]}]},
+{text:"Archivos",url:"files.html",children:[
+{text:"Lista de archivos",url:"files.html"},
+{text:"Miembros de los ficheros",url:"globals.html",children:[
+{text:"Todo",url:"globals.html"},
+{text:"Funciones",url:"globals_func.html"}]}]}]}

@@ -1,22 +1,24 @@
 #include "customwidgets.h"
 
-LabelHexSpinBox::LabelHexSpinBox(QWidget *parent, QString text) : QWidget(parent)
+LabelHexSpinBox::LabelHexSpinBox(QWidget *parent, QString text, int value) : QWidget(parent)
 {
+    type = value;
     m_Label= new QLabel(text);
-    m_HexSpinBox= new HexSpinBox;
-    m_Label->setBuddy(m_HexSpinBox);
+    (type==0)?m_HexSpinBox = new HexSpinBox:m_QSpinBox = new QSpinBox;
+    m_Label->setBuddy((type==0)?m_HexSpinBox:m_QSpinBox);
     m_HBoxLayout= new QHBoxLayout;
     m_HBoxLayout->setSizeConstraint(QLayout::SetFixedSize);
     m_HBoxLayout->addWidget(m_Label);
-    m_HBoxLayout->addWidget(m_HexSpinBox);
-    connect(m_HexSpinBox,SIGNAL(valueChanged(int)),this,SLOT(setValue(int)));
-    connect(this,SIGNAL(valueChanged(int)),m_HexSpinBox,SLOT(setValue(int)));
-
+    m_HBoxLayout->addWidget((type==0)?m_HexSpinBox:m_QSpinBox);
+    (type==0)?connect(m_HexSpinBox,SIGNAL(valueChanged(int)),this,SLOT(setValue(int))):
+               connect(m_QSpinBox,SIGNAL(valueChanged(int)),this,SLOT(setValue(int)));
+    (type==0)?connect(this,SIGNAL(valueChanged(int)),m_HexSpinBox,SLOT(setValue(int))):
+                connect(this,SIGNAL(valueChanged(int)),m_QSpinBox,SLOT(setValue(int)));
     this->setLayout(m_HBoxLayout);
 }
 void LabelHexSpinBox::setRange(int value1,int value2)
 {
-    m_HexSpinBox->setRange(value1,value2);
+    (type==0)?m_HexSpinBox->setRange(value1,value2):m_QSpinBox->setRange(value1,value2);
 }
 
 SectionDescriptor::SectionDescriptor(QWidget *parent, QString text)
