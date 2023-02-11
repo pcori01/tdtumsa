@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['finalpage_298',['FinalPage',['../class_final_page.html#abbaebffd88693f9393aae2a614592749',1,'FinalPage']]]
+  ['gettextcharformat_331',['getTextCharFormat',['../class_kick_python_syntax_highlighter.html#a7615faf794c12280026e0af1f8af3511',1,'KickPythonSyntaxHighlighter']]]
 ];

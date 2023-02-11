@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['doubleslider_263',['DoubleSlider',['../class_double_slider.html',1,'']]]
+  ['doubleslider_295',['DoubleSlider',['../class_double_slider.html',1,'']]]
 ];

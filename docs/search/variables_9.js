@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['layouttab_399',['layoutTab',['../class_code_page.html#ae18ee45d246e205ed017d7d1cddff3b6',1,'CodePage::layoutTab()'],['../class_mux_page.html#ac5bb8c7c00fd8690521be95b5401aa28',1,'MuxPage::layoutTab()'],['../class_final_page.html#a6dcf96c45fecc2655e72c9a5b7380060',1,'FinalPage::layoutTab()']]]
+  ['keywords_450',['keywords',['../class_kick_python_syntax_highlighter.html#a5b6d42f6f9a72c5c92844540a8f8521f',1,'KickPythonSyntaxHighlighter']]]
 ];

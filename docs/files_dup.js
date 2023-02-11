@@ -30,6 +30,7 @@ var files_dup =
       [ "PlanPage", "class_plan_page.html", "class_plan_page" ],
       [ "CodePage", "class_code_page.html", "class_code_page" ],
       [ "MuxPage", "class_mux_page.html", "class_mux_page" ],
+      [ "IntParam", "struct_mux_page_1_1_int_param.html", "struct_mux_page_1_1_int_param" ],
       [ "FinalPage", "class_final_page.html", "class_final_page" ]
     ] ]
 ];

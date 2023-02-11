@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['keywords_398',['keywords',['../class_kick_python_syntax_highlighter.html#a5b6d42f6f9a72c5c92844540a8f8521f',1,'KickPythonSyntaxHighlighter']]]
+  ['indexp_448',['IndexP',['../class_plan_page.html#a15dfc8078e72518782db766e3fe4ee8c',1,'PlanPage']]],
+  ['initial_5fclass_449',['initial_class',['../class_mux_page.html#a0b96549d426adad5f278ec7c7d3a5b0b',1,'MuxPage']]]
 ];

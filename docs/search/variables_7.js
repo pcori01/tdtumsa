@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['indexp_396',['IndexP',['../class_plan_page.html#a15dfc8078e72518782db766e3fe4ee8c',1,'PlanPage']]],
-  ['initial_5fclass_397',['initial_class',['../class_mux_page.html#a0b96549d426adad5f278ec7c7d3a5b0b',1,'MuxPage']]]
+  ['hexspinbox_447',['HEXSPINBOX',['../class_label_hex_spin_box.html#a64e254adb9a6e4bdafeae096e08b3e36',1,'LabelHexSpinBox']]]
 ];

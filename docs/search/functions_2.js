@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['doubleslider_293',['DoubleSlider',['../class_double_slider.html#afcf04c7a0e016478532a7a750932ca3a',1,'DoubleSlider']]],
-  ['doublevaluechanged_294',['doubleValueChanged',['../class_double_slider.html#a65a95d43eafc27fce07cc565a8cf98b1',1,'DoubleSlider']]]
+  ['elementdescriptor_327',['ElementDescriptor',['../class_element_descriptor.html#a5cc413ca0ff34eeca601478862ad5b9d',1,'ElementDescriptor']]],
+  ['elementsectiondescriptor_328',['ElementSectionDescriptor',['../class_element_section_descriptor.html#a0512cc72f593bf7c1e32f00901682a2e',1,'ElementSectionDescriptor']]],
+  ['execute_329',['execute',['../class_final_page.html#acecbf97669431ff2118f4bc496d9f508',1,'FinalPage']]]
 ];

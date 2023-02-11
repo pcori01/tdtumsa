@@ -23,7 +23,7 @@ for the JavaScript code in this file
 var NAVTREE =
 [
   [ "TDT Umsa", "index.html", [
-    [ "tdtumsa", "md__r_e_a_d_m_e.html", null ],
+    [ "TDTUMSA", "md__r_e_a_d_m_e.html", null ],
     [ "Clases", "annotated.html", [
       [ "Lista de clases", "annotated.html", "annotated_dup" ],
       [ "Índice de clases", "classes.html", null ],
@@ -50,7 +50,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_kick_python_syntax_highlighter_8h.html",
-"class_mux_page.html#ae74e34650b4c6560f8ee9a4643f46872"
+"class_mux_page.html#abe43cad2ad7ead8babc24f0021713225"
 ];
 
 var SYNCONMSG = 'click en deshabilitar sincronización';

@@ -1,6 +1,7 @@
 var hierarchy =
 [
     [ "HighlightingRule", "class_highlighting_rule.html", null ],
+    [ "MuxPage::IntParam", "struct_mux_page_1_1_int_param.html", null ],
     [ "QGroupBox", null, [
       [ "SectionDescriptor", "class_section_descriptor.html", null ],
       [ "SectionLoop", "class_section_loop.html", null ]
