@@ -36,6 +36,10 @@ QT_END_NAMESPACE
 
 class QRegExpValidator;
 
+/**
+ * @brief
+ *
+ */
 class Tdtumsa : public QWizard
 {
     //Averiguar Que hace
@@ -127,6 +131,11 @@ public:
 
     bool validatePage() override;
 
+    /**
+     * @brief
+     *
+     * @param priority
+     */
     void setPriority(int priority)
     {
         IndexP = priority;
@@ -141,6 +150,11 @@ public:
         return IndexP;
     }
 
+    /**
+     * @brief
+     *
+     * @param value
+     */
     void setSevicesPlan(int value)
     {
         m_SevicesPlan = value;
@@ -161,9 +175,9 @@ private:
     QLabel *optionLabel[4];
     QCheckBox *OneSegCheckBox;
     QRadioButton *optionRadioButton[4];
-    int IndexP;
-    int m_SevicesPlan;
-    QWidget *services;
+    int IndexP; /**< TODO: describe */
+    int m_SevicesPlan; /**< TODO: describe */
+    QWidget *services; /**< TODO: describe */
 
 };
 
@@ -261,12 +275,6 @@ public slots:
      * @param value1
      * @param value2
      */
-    void audioSpinBoxsetrange(int value1, int value2);
-    /**
-     * @brief
-     *
-     * @param value
-     */
     void notifyAudioChanges();
     /**
      * @brief
@@ -310,12 +318,16 @@ public:
     void cleanupPage() override;
 
 private:
+    /**
+     * @brief
+     *
+     */
     struct IntParam {
-        QString name;
-        int value;
-        int type;
-        int min;
-        int max;
+        QString name; /**< TODO: describe */
+        int value; /**< TODO: describe */
+        int type; /**< TODO: describe */
+        int min; /**< TODO: describe */
+        int max; /**< TODO: describe */
     };
     QTabWidget *MuxTab; /**< TODO: describe */
     QVBoxLayout *layoutTab[18]; /**< TODO: describe */
@@ -332,34 +344,39 @@ private:
 
     SectionDescriptor *PATprogram_loop_item[5];
 
-    LabelHexSpinBox *PATServiceID[5];
+    LabelHexSpinBox *PATServiceID[5]; /**< TODO: describe */
+    LabelHexSpinBox *PATServicePID[5]; /**< TODO: describe */
 
-    LabelHexSpinBox *PATServicePID[5];
+    LabelHexSpinBox *NITNetworkID; /**< TODO: describe */
+    SectionLoop *NITNetworkDescLoop; /**< TODO: describe */
 
-    LabelHexSpinBox *NITNetworkID;
-    SectionLoop *NITNetworkDescLoop;
+    SectionDescriptor *NITNetworkDesc; /**< TODO: describe */
+    LabelLineEdit *NITNetworkName; /**< TODO: describe */
 
-    SectionDescriptor *NITNetworkDesc;
-    LabelLineEdit *NITNetworkName;
+    SectionDescriptor *NITSystemMngDesc; /**< TODO: describe */
+    LabelHexSpinBox *NITSystemMngItem[3]; /**< TODO: describe */
 
-    SectionDescriptor *NITSystemMngDesc;
-    LabelHexSpinBox *NITSystemMngItem[3];
+    QList<LabelHexSpinBox*> *NITSystemMngDesc_widgets; /**< TODO: describe */
+    QList<IntParam> NITSystemMngDesc_item = {{"broadcasting_flag",0,LabelHexSpinBox::HEXSPINBOX,0,0}, /**< TODO: describe */
+                                            {"broadcasting_identifier",3,LabelHexSpinBox::HEXSPINBOX,0,3},
+                                            {"additional_broadcasting_identification",1,LabelHexSpinBox::HEXSPINBOX,0,1},
+                                            };
 
-    SectionLoop *NITTSLoop;
-    SectionLoop *NITTSLoopItem;
+    SectionLoop *NITTSLoop; /**< TODO: describe */
+    SectionLoop *NITTSLoopItem; /**< TODO: describe */
 
-    ElementSectionDescriptor *NITTSItem;
-    LabelHexSpinBox *NITTSID;
-    LabelHexSpinBox *NITOriginNetworkID;
+    ElementSectionDescriptor *NITTSItem; /**< TODO: describe */
+    LabelHexSpinBox *NITTSID; /**< TODO: describe */
+    LabelHexSpinBox *NITOriginNetworkID; /**< TODO: describe */
 
-    SectionLoop *NITTSTransportDescLoop;
-    SectionLoop *NITServiceListDesc;
+    SectionLoop *NITTSTransportDescLoop; /**< TODO: describe */
+    SectionLoop *NITServiceListDesc; /**< TODO: describe */
 
-    SectionDescriptor *NITService[5];
-    LabelHexSpinBox *NITServiceID[5];
-    LabelHexSpinBox *NITServiceType[5];
+    SectionDescriptor *NITService[5]; /**< TODO: describe */
+    LabelHexSpinBox *NITServiceID[5]; /**< TODO: describe */
+    LabelHexSpinBox *NITServiceType[5]; /**< TODO: describe */
 
-    SectionDescriptor *NITTerrestrialDeliverySystemDesc;
+    SectionDescriptor *NITTerrestrialDeliverySystemDesc; /**< TODO: describe */
     LabelHexSpinBox *NITAreaCode; /**< TODO: describe */
 
     SectionLoop *transport_stream_information_descriptor; /**< TODO: describe */
@@ -370,28 +387,28 @@ private:
 
     QFormLayout *TOT_Layout;
     QWidget *TOT_Widget;
-    QStringList TOT_items={"year","month","day","hour","minute","second"};
-    QList<QLabel*> *TOT_Label;
-    SectionLoop *TOT_descriptor_Loop;
+    QStringList TOT_items={"year","month","day","hour","minute","second"}; /**< TODO: describe */
+    QList<QLabel*> *TOT_Label; /**< TODO: describe */
+    SectionLoop *TOT_descriptor_Loop; /**< TODO: describe */
 
-    ElementSectionDescriptor *SDTItem;
-    LabelHexSpinBox *SDTTSID;
-    LabelHexSpinBox *SDTNetworkID;
+    ElementSectionDescriptor *SDTItem; /**< TODO: describe */
+    LabelHexSpinBox *SDTTSID; /**< TODO: describe */
+    LabelHexSpinBox *SDTNetworkID; /**< TODO: describe */
 
-    SectionLoop *SDTServiceLoop;
+    SectionLoop *SDTServiceLoop; /**< TODO: describe */
 
-    SectionLoop *SDTServiceLoopItem[5];
-    ElementSectionDescriptor *SDTServiceLoopElement[5];
+    SectionLoop *SDTServiceLoopItem[5]; /**< TODO: describe */
+    ElementSectionDescriptor *SDTServiceLoopElement[5]; /**< TODO: describe */
 
-    LabelHexSpinBox *SDTServiceLoopElementWidget[5][5];
+    LabelHexSpinBox *SDTServiceLoopElementWidget[5][5]; /**< TODO: describe */
 
-    SectionLoop *SDTServiceDescLoop[5];
+    SectionLoop *SDTServiceDescLoop[5]; /**< TODO: describe */
 
-    SectionDescriptor *SDTServiceDesc[5];
+    SectionDescriptor *SDTServiceDesc[5]; /**< TODO: describe */
 
-    LabelHexSpinBox *SDTServiceType[5];
-    LabelLineEdit *SDTServiceProviderName[5];
-    LabelLineEdit *SDTServiceName[5];
+    LabelHexSpinBox *SDTServiceType[5]; /**< TODO: describe */
+    LabelLineEdit *SDTServiceProviderName[5]; /**< TODO: describe */
+    LabelLineEdit *SDTServiceName[5]; /**< TODO: describe */
 
     QGroupBox *PMTServiceLoop[5]; /**< TODO: describe */
     QGridLayout *PMTServiceLooplayout[5]; /**< TODO: describe */
@@ -422,14 +439,14 @@ private:
     LabelHexSpinBox *PMTAITdata_component_descriptorItem[5];
 
 
-    SectionDescriptor *PMTAITadditional_data_component_info[5];
-    SectionDescriptor *PMTAITait_identifier_info[5];
-    QLabel *PMTAITait_identifier_infoLabel[5][2];
-    HexSpinBox *PMTAITait_identifier_infoHexSpinBox[5][2];
+    SectionDescriptor *PMTAITadditional_data_component_info[5]; /**< TODO: describe */
+    SectionDescriptor *PMTAITait_identifier_info[5]; /**< TODO: describe */
+    QLabel *PMTAITait_identifier_infoLabel[5][2]; /**< TODO: describe */
+    HexSpinBox *PMTAITait_identifier_infoHexSpinBox[5][2]; /**< TODO: describe */
 
-    SectionDescriptor *PMTAITapplication_signalling_descriptor[5];
-    QLabel *PMTAITapplication_signalling_descriptorLabel[5][2];
-    HexSpinBox *PMTAITapplication_signalling_descriptorHexSpinBox[5][2];
+    SectionDescriptor *PMTAITapplication_signalling_descriptor[5]; /**< TODO: describe */
+    QLabel *PMTAITapplication_signalling_descriptorLabel[5][2]; /**< TODO: describe */
+    HexSpinBox *PMTAITapplication_signalling_descriptorHexSpinBox[5][2]; /**< TODO: describe */
 
     SectionLoop *PMTDSMCC[5]; /**< TODO: describe */
     ElementSectionDescriptor *PMTDSMCCItem[5];
@@ -439,33 +456,33 @@ private:
 
     SectionDescriptor *PMTDSMCCassociation_tag_descriptor[5];
     QLabel *PMTDSMCCassociation_tag_descriptorLabel[5][5];
-    HexSpinBox *PMTDSMCCassociation_tag_descriptorHexSpinBox[5][5];
-    SectionDescriptor *PMTDSMCCstream_identifier_descriptor[5];
-    QLabel *PMTDSMCCstream_identifier_descriptorLabel[5];
-    HexSpinBox *PMTDSMCCstream_identifier_descriptorHexSpinBox[5];
+    HexSpinBox *PMTDSMCCassociation_tag_descriptorHexSpinBox[5][5]; /**< TODO: describe */
+    SectionDescriptor *PMTDSMCCstream_identifier_descriptor[5]; /**< TODO: describe */
+    QLabel *PMTDSMCCstream_identifier_descriptorLabel[5]; /**< TODO: describe */
+    HexSpinBox *PMTDSMCCstream_identifier_descriptorHexSpinBox[5]; /**< TODO: describe */
 
-    SectionDescriptor *PMTDSMCCcarousel_identifier_descriptor[5];
-    QLabel *PMTDSMCCcarousel_identifier_descriptorLabel[5][2];
-    HexSpinBox *PMTDSMCCcarousel_identifier_descriptorHexSpinBox[5][2];
+    SectionDescriptor *PMTDSMCCcarousel_identifier_descriptor[5]; /**< TODO: describe */
+    QLabel *PMTDSMCCcarousel_identifier_descriptorLabel[5][2]; /**< TODO: describe */
+    HexSpinBox *PMTDSMCCcarousel_identifier_descriptorHexSpinBox[5][2]; /**< TODO: describe */
 
-    SectionDescriptor *PMTDSMCCdata_component_descriptor[5];
-    ElementSectionDescriptor *PMTDSMCCdata_component_descriptorItem[5];
-    LabelHexSpinBox *PMTDSMCCdata_component_id[5];
+    SectionDescriptor *PMTDSMCCdata_component_descriptor[5]; /**< TODO: describe */
+    ElementSectionDescriptor *PMTDSMCCdata_component_descriptorItem[5]; /**< TODO: describe */
+    LabelHexSpinBox *PMTDSMCCdata_component_id[5]; /**< TODO: describe */
 
-    SectionDescriptor *PMTDSMCCadditional_data_component_info[5];
-    SectionDescriptor *PMTDSMCCadditional_ginga_j_info[5];
-    LabelHexSpinBox  *PMTDSMCCadditional_ginga_j_infoItem[5][5];
+    SectionDescriptor *PMTDSMCCadditional_data_component_info[5]; /**< TODO: describe */
+    SectionDescriptor *PMTDSMCCadditional_ginga_j_info[5]; /**< TODO: describe */
+    LabelHexSpinBox  *PMTDSMCCadditional_ginga_j_infoItem[5][5]; /**< TODO: describe */
 
-    QLayout *AITLayout[5];
+    QLayout *AITLayout[5]; /**< TODO: describe */
 
-    LabelHexSpinBox *AITApptype[5];
+    LabelHexSpinBox *AITApptype[5]; /**< TODO: describe */
 
-    SectionLoop *AITApploop[5];
-    SectionLoop *AITApp[5];
-    ElementSectionDescriptor *AITAppElementSection[5];
+    SectionLoop *AITApploop[5]; /**< TODO: describe */
+    SectionLoop *AITApp[5]; /**< TODO: describe */
+    ElementSectionDescriptor *AITAppElementSection[5]; /**< TODO: describe */
 
-    QList<LabelHexSpinBox*> *AIT_app_item_widgets[5];
-    QList<IntParam> AIT_app_items = {{"Organization_ID",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E},
+    QList<LabelHexSpinBox*> *AIT_app_item_widgets[5]; /**< TODO: describe */
+    QList<IntParam> AIT_app_items = {{"Organization_ID",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E}, /**< TODO: describe */
                                     {"AppID",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
                                     {"Application Control Code",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
                                     };
@@ -476,50 +493,50 @@ private:
 
     SectionLoop *AITApp_descriptors_loop[5];
 
-    SectionDescriptor *AITTransportProtocolControlDesc[5];
-    QList<LabelHexSpinBox*> *AITTransportProtocolControlDesc_item_widgets[5];
-    QList<IntParam> AITTransportProtocolControlDesc_items = {{"protocol_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E},
+    SectionDescriptor *AITTransportProtocolControlDesc[5]; /**< TODO: describe */
+    QList<LabelHexSpinBox*> *AITTransportProtocolControlDesc_item_widgets[5]; /**< TODO: describe */
+    QList<IntParam> AITTransportProtocolControlDesc_items = {{"protocol_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E}, /**< TODO: describe */
                                                             {"transport_protocol_label",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
                                                             {"remote_connection",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
                                                             {"component_tag",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
                                                             };
-    LabelHexSpinBox *AITprotocol_id[5];
-    LabelHexSpinBox *AITtransport_protocol_label[5];
-    LabelHexSpinBox *AITremote_connection[5];
-    LabelHexSpinBox *AITcomponent_tag[5];
+    LabelHexSpinBox *AITprotocol_id[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITtransport_protocol_label[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITremote_connection[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITcomponent_tag[5]; /**< TODO: describe */
 
-    SectionDescriptor *AITAppDesc[5];
-    LabelHexSpinBox *AITapplication_profile[5];
-    LabelHexSpinBox *AITversion_major[5];
-    LabelHexSpinBox *AITversion_minor[5];
-    LabelHexSpinBox *AITversion_micro[5];
-    LabelHexSpinBox *AITservice_bound_flagr[5];
-    LabelHexSpinBox *AITvisibility[5];
-    LabelHexSpinBox *AITapplication_priority[5];
-    LabelHexSpinBox *AITtransport_protocol_labels[5];
+    SectionDescriptor *AITAppDesc[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITapplication_profile[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITversion_major[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITversion_minor[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITversion_micro[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITservice_bound_flagr[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITvisibility[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITapplication_priority[5]; /**< TODO: describe */
+    LabelHexSpinBox *AITtransport_protocol_labels[5]; /**< TODO: describe */
 
-    SectionDescriptor *AITApp_name_descriptor[5];
-    LabelLineEdit *AITapplication_name[5];
+    SectionDescriptor *AITApp_name_descriptor[5]; /**< TODO: describe */
+    LabelLineEdit *AITapplication_name[5]; /**< TODO: describe */
 
-    SectionDescriptor *ginga_ncl_application_location_descriptor[5];
-    LabelLineEdit *AITbase_directory[5];
-    LabelLineEdit *class_path_extension[5];
-    LabelLineEdit *initial_class[5];
+    SectionDescriptor *ginga_ncl_application_location_descriptor[5]; /**< TODO: describe */
+    LabelLineEdit *AITbase_directory[5]; /**< TODO: describe */
+    LabelLineEdit *class_path_extension[5]; /**< TODO: describe */
+    LabelLineEdit *initial_class[5]; /**< TODO: describe */
 
-    SectionLoop *EIT_loop[5];
-    SectionDescriptor *EIT_loop_item[5];
-    QList<LabelHexSpinBox*> *EITelements[5];
-    QList<IntParam> EIT_items = {{"table_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E},
+    SectionLoop *EIT_loop[5]; /**< TODO: describe */
+    SectionDescriptor *EIT_loop_item[5]; /**< TODO: describe */
+    QList<LabelHexSpinBox*> *EITelements[5]; /**< TODO: describe */
+    QList<IntParam> EIT_items = {{"table_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E}, /**< TODO: describe */
                                  {"service_id",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
                                  {"transport_stream_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
                                  {"original_network_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
                                 };
 
-    SectionLoop *EIT_event_loop[5];
-    SectionDescriptor *EIT_event_loop_item[5];
+    SectionLoop *EIT_event_loop[5]; /**< TODO: describe */
+    SectionDescriptor *EIT_event_loop_item[5]; /**< TODO: describe */
 
-    QList<LabelHexSpinBox*> *EIT_event_loop_widgets[5];
-    QList<IntParam> EIT_event_loop_items = {{"event_id",1,LabelHexSpinBox::HEXSPINBOX,0,255},
+    QList<LabelHexSpinBox*> *EIT_event_loop_widgets[5]; /**< TODO: describe */
+    QList<IntParam> EIT_event_loop_items = {{"event_id",1,LabelHexSpinBox::HEXSPINBOX,0,255}, /**< TODO: describe */
                                             {"start_year",QDate::currentDate().year()-1900,LabelHexSpinBox::SPINBOX,0,65535},
                                             {"start_month",QDate::currentDate().month(),LabelHexSpinBox::SPINBOX,0,12},
                                             {"start_day",QDate::currentDate().day(),LabelHexSpinBox::SPINBOX,0,31},
@@ -533,10 +550,10 @@ private:
                                             {"free_CA_mode",0,LabelHexSpinBox::HEXSPINBOX,0,0},
                                            };
 
-    SectionLoop *EIT_follow_loop[5];
-    ElementSectionDescriptor *EIT_follow_loop_item[5];
-    QList<LabelHexSpinBox*> *EIT_follow_elements[5];
-    QList<IntParam> EIT_follow_items = {{"table_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E},
+    SectionLoop *EIT_follow_loop[5]; /**< TODO: describe */
+    ElementSectionDescriptor *EIT_follow_loop_item[5]; /**< TODO: describe */
+    QList<LabelHexSpinBox*> *EIT_follow_elements[5]; /**< TODO: describe */
+    QList<IntParam> EIT_follow_items = {{"table_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E}, /**< TODO: describe */
                                  {"service_id",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
                                  {"transport_stream_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
                                  {"original_network_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
@@ -544,11 +561,11 @@ private:
 
 
 
-    SectionLoop *EIT_follow_event_loop[5];
-    SectionDescriptor *EIT_follow_event_loop_item[5];
+    SectionLoop *EIT_follow_event_loop[5]; /**< TODO: describe */
+    SectionDescriptor *EIT_follow_event_loop_item[5]; /**< TODO: describe */
 
-    QList<LabelHexSpinBox*> *EIT_follow_event_loop_widgets[5];
-    QList<IntParam> EIT_follow_event_loop_items = {{"event_id",1,LabelHexSpinBox::HEXSPINBOX,0,255},
+    QList<LabelHexSpinBox*> *EIT_follow_event_loop_widgets[5]; /**< TODO: describe */
+    QList<IntParam> EIT_follow_event_loop_items = {{"event_id",1,LabelHexSpinBox::HEXSPINBOX,0,255}, /**< TODO: describe */
                                             {"start_year",QDate::currentDate().year()-1900,LabelHexSpinBox::SPINBOX,0,65535},
                                             {"start_month",QDate::currentDate().month(),LabelHexSpinBox::SPINBOX,0,12},
                                             {"start_day",QDate::currentDate().day(),LabelHexSpinBox::SPINBOX,0,31},

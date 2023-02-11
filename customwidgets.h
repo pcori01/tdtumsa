@@ -5,6 +5,10 @@
 #include <QtWidgets>
 #include "hexspinbox.h"
 
+/**
+ * @brief
+ *
+ */
 class LabelHexSpinBox : public QWidget
 {
     Q_OBJECT
@@ -12,27 +16,55 @@ class LabelHexSpinBox : public QWidget
 
 public:
 
+    /**
+     * @brief
+     *
+     * @param parent
+     * @param text
+     * @param valuetype
+     */
     LabelHexSpinBox(QWidget *parent = nullptr,QString text=nullptr,int valuetype=0);
+    /**
+     * @brief
+     *
+     * @param int
+     * @param int
+     */
     void setRange(int,int);
-    const static int HEXSPINBOX = 0;
-    const static int SPINBOX = 1;
+    const static int HEXSPINBOX = 0; /**< TODO: describe */
+    const static int SPINBOX = 1; /**< TODO: describe */
+    /**
+     * @brief
+     *
+     * @return int
+     */
     int Value() const {
         return m_value;
     }
 
 private:
 
-    int m_value=0;
-    int type=0;
+    int m_value=0; /**< TODO: describe */
+    int type=0; /**< TODO: describe */
     QLabel *m_Label; /**< TODO: describe */
     HexSpinBox *m_HexSpinBox; /**< TODO: describe */
     QSpinBox *m_QSpinBox;
     QHBoxLayout *m_HBoxLayout;
 
 signals:
+    /**
+     * @brief
+     *
+     * @param int
+     */
     void valueChanged(int);
 
 public slots:
+    /**
+     * @brief
+     *
+     * @param value
+     */
     void setValue(int value)
     {
         if(m_value!=value){
@@ -44,6 +76,10 @@ public slots:
 
 };
 
+/**
+ * @brief
+ *
+ */
 class LabelLineEdit : public QWidget
 {
     Q_OBJECT
@@ -51,8 +87,19 @@ class LabelLineEdit : public QWidget
 
 public:
 
+    /**
+     * @brief
+     *
+     * @param parent
+     * @param text
+     */
     LabelLineEdit(QWidget *parent = nullptr,QString text=nullptr);
 
+    /**
+     * @brief
+     *
+     * @return QString
+     */
     QString Text() const
     {
         return m_text;
@@ -60,16 +107,26 @@ public:
 
 private:
 
-    QString m_text;
+    QString m_text; /**< TODO: describe */
 
     QLabel *m_Label; /**< TODO: describe */
     QLineEdit *m_LineEdit; /**< TODO: describe */
     QHBoxLayout *m_HBoxLayout;
 
 signals:
+    /**
+     * @brief
+     *
+     * @param QString
+     */
     void textChanged(QString);
 
 public slots:
+    /**
+     * @brief
+     *
+     * @param text
+     */
     void setText(QString text)
     {
         if(m_text!=text){
@@ -115,6 +172,10 @@ private:
 
 };
 
+/**
+ * @brief
+ *
+ */
 class SectionLoop : public QGroupBox
 {
     Q_OBJECT
@@ -142,6 +203,10 @@ private:
 
 };
 
+/**
+ * @brief
+ *
+ */
 class ElementSectionDescriptor : public virtual QWidget
 {
     Q_OBJECT
@@ -167,6 +232,10 @@ private:
     QHBoxLayout *m_HBoxLayout;
 };
 
+/**
+ * @brief
+ *
+ */
 class ElementDescriptor : public virtual QWidget
 {
     Q_OBJECT
@@ -190,7 +259,7 @@ public slots:
 
 private:
     QHBoxLayout *m_HBoxLayout;
-    QStringList m_QStringList;
+    QStringList m_QStringList; /**< TODO: describe */
 };
 
 

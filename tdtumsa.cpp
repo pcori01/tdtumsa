@@ -298,8 +298,6 @@ CodePage::CodePage(QWidget *parent)
         connect(aSampleRateComboBox[i],SIGNAL(currentIndexChanged(int)),this,SLOT(notifyAudioChanges()));
         connect(aChanelsComboBox[i],SIGNAL(currentIndexChanged(int)),this,SLOT(notifyAudioChanges()));
         connect(aCodecComboBox[i],SIGNAL(currentIndexChanged(int)),this,SLOT(notifyAudioChanges()));
-        connect(audioSlider[i],SIGNAL(rangeChanged(int,int)),this,SLOT(audioSpinBoxsetrange(int,int)));
-
         connect(GingaCheckBox[i],SIGNAL(clicked(bool)),Ginga[i],SLOT(setEnabled(bool)));
 
         videoSpinBox[i]->setSingleStep(0.1);
@@ -501,15 +499,11 @@ void CodePage::notifyFileLoad()
 
 }
 
-void CodePage::audioSpinBoxsetrange(int value1, int value2)
-{
-    audioSpinBox[CodeTab->currentIndex()]->setRange(value1,value2);
-}
 
 void CodePage::notifyAudioChanges()
 {
 
-        int index=CodeTab->currentIndex();
+        int index=CodeTab->currentIndex()+1;
         QVector<int> AudioBitratemin[2][2], AudioBitratemax[2][2],
                 Audio1sBitrate[2];
 
@@ -530,11 +524,15 @@ void CodePage::notifyAudioChanges()
         {
             audioSlider[0]->setRange(Audio1sBitrate[0][aSampleRateComboBox[0]->currentIndex()],
                                     Audio1sBitrate[1][aSampleRateComboBox[0]->currentIndex()]);
+            audioSpinBox[0]->setRange(Audio1sBitrate[0][aSampleRateComboBox[0]->currentIndex()],
+                                    Audio1sBitrate[1][aSampleRateComboBox[0]->currentIndex()]);
         }
 
         else if((this->sender()!=aSampleRateComboBox[0])&&(this->sender()!=aCodecComboBox[0]))
         {
             audioSlider[index]->setRange(AudioBitratemin[aSampleRateComboBox[index]->currentIndex()][aCodecComboBox[index]->currentIndex()][aChanelsComboBox[index]->currentIndex()]
+                                         ,AudioBitratemax[aSampleRateComboBox[index]->currentIndex()][aCodecComboBox[index]->currentIndex()][aChanelsComboBox[index]->currentIndex()]);
+            audioSpinBox[index]->setRange(AudioBitratemin[aSampleRateComboBox[index]->currentIndex()][aCodecComboBox[index]->currentIndex()][aChanelsComboBox[index]->currentIndex()]
                                          ,AudioBitratemax[aSampleRateComboBox[index]->currentIndex()][aCodecComboBox[index]->currentIndex()][aChanelsComboBox[index]->currentIndex()]);
         }
     }
@@ -606,14 +604,13 @@ MuxPage::MuxPage(QWidget *parent)
     NITSystemMngDesc = new SectionDescriptor(this,tr("system_management_descriptor"));
     NITNetworkDescLoop->layout()->addWidget(NITSystemMngDesc);
 
-    QStringList NITSystemMngDescItemText = {"broadcasting_flag","broadcasting_identifier",
-                                            "additional_broadcasting_identification"};
-    QList<int> NITSystemMngDescItemValues = {0,3,1};
-    for(int it=0;it<3;it++){
-        NITSystemMngItem[it] = new LabelHexSpinBox(this,NITSystemMngDescItemText[it]);
-        NITSystemMngItem[it]->setObjectName(NITSystemMngDescItemText[it]);
-        NITSystemMngItem[it]->setRange(NITSystemMngDescItemValues[it],NITSystemMngDescItemValues[it]);
-        NITSystemMngDesc->layout()->addWidget(NITSystemMngItem[it]);
+    NITSystemMngDesc_widgets= new QList<LabelHexSpinBox*>;
+    foreach (const IntParam &item, NITSystemMngDesc_item) {
+        NITSystemMngDesc_widgets->append(new LabelHexSpinBox(this,item.name));
+        NITSystemMngDesc_widgets->last()->setRange(item.min,item.max);
+        NITSystemMngDesc_widgets->last()->setValue(item.value);
+        NITSystemMngDesc->layout()->addWidget(NITSystemMngDesc_widgets->last());
+        registerField(item.name,NITSystemMngDesc_widgets->last(),"value");
     }
 
     NITTSLoop=new SectionLoop(this,tr("Transport Stream Loop"));
@@ -1492,9 +1489,9 @@ void FinalPage::initializePage()
                      "              network_name = tvd_network_name,\n"
                      "      ),\n"
                      "		system_management_descriptor(\n"
-                     "            broadcasting_flag = 0,\n"
-                     "            broadcasting_identifier = 3,\n"
-                     "            additional_broadcasting_identification = 0x01,\n"
+                     "            broadcasting_flag = "+field("broadcasting_flag").toString()+",\n"
+                     "            broadcasting_identifier = "+field("broadcasting_identifier").toString()+",\n"
+                     "            additional_broadcasting_identification = "+field("additional_broadcasting_identification").toString()+",\n"
                      "            additional_identification_bytes = [],\n"
                      "      )\n"
                      "	],\n"
@@ -1566,6 +1563,7 @@ void FinalPage::initializePage()
                      "out = open(\"./nit.sec\", \"wb\")\n"
                      "out.close\n"
                      "os.system(\"sec2ts 16 < ./nit.sec > ./nit.ts\")\n\n");
+
     strTables.append("sdt = service_description_section(\n"
                      "	transport_stream_id = tvd_ts_id,\n"
                      "	original_network_id = tvd_orig_network_id,\n"

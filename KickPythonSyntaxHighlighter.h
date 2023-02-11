@@ -27,9 +27,20 @@ USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <QSyntaxHighlighter>
 
 //! Container to describe a highlighting rule. Based on a regular expression, a relevant match # and the format.
+/**
+ * @brief
+ *
+ */
 class HighlightingRule
 {
 public:
+ /**
+  * @brief
+  *
+  * @param patternStr
+  * @param n
+  * @param matchingFormat
+  */
  HighlightingRule(const QString &patternStr, int n, const QTextCharFormat &matchingFormat)
  {
   originalRuleStr = patternStr;
@@ -37,36 +48,70 @@ public:
   nth = n;
   format = matchingFormat;
  }
- QString originalRuleStr;
- QRegExp pattern;
- int nth;
- QTextCharFormat format;
+ QString originalRuleStr; /**< TODO: describe */
+ QRegExp pattern; /**< TODO: describe */
+ int nth; /**< TODO: describe */
+ QTextCharFormat format; /**< TODO: describe */
 };
 
 //! Implementation of highlighting for Python code.
+/**
+ * @brief
+ *
+ */
 class KickPythonSyntaxHighlighter : public QSyntaxHighlighter
 {
  Q_OBJECT
 public:
+ /**
+  * @brief
+  *
+  * @param parent
+  */
  KickPythonSyntaxHighlighter(QTextDocument *parent = nullptr);
 protected:
+     /**
+      * @brief
+      *
+      * @param text
+      */
      void highlightBlock(const QString &text);
 private:
- QStringList keywords;
- QStringList operators;
- QStringList braces;
+ QStringList keywords; /**< TODO: describe */
+ QStringList operators; /**< TODO: describe */
+ QStringList braces; /**< TODO: describe */
 
- QHash<QString, QTextCharFormat> basicStyles;
+ QHash<QString, QTextCharFormat> basicStyles; /**< TODO: describe */
 
+ /**
+  * @brief
+  *
+  */
  void initializeRules();
 
  //! Highlighst multi-line strings, returns true if after processing we are still within the multi-line section.
+ /**
+  * @brief
+  *
+  * @param text
+  * @param delimiter
+  * @param inState
+  * @param style
+  * @return bool
+  */
  bool matchMultiline(const QString &text, const QRegExp &delimiter, const int inState, const QTextCharFormat &style);
+ /**
+  * @brief
+  *
+  * @param colorName
+  * @param style
+  * @return const QTextCharFormat
+  */
  const QTextCharFormat getTextCharFormat(const QString &colorName, const QString &style = QString());
 
- QList<HighlightingRule> rules;
- QRegExp triSingleQuote;
- QRegExp triDoubleQuote;
+ QList<HighlightingRule> rules; /**< TODO: describe */
+ QRegExp triSingleQuote; /**< TODO: describe */
+ QRegExp triDoubleQuote; /**< TODO: describe */
 };
 
 

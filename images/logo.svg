@@ -12,13 +12,13 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   inkscape:export-ydpi="4.0599999"
+   inkscape:export-ydpi="9.4442759"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    version="1.1"
-   inkscape:export-xdpi="4.0599999"
+   inkscape:export-xdpi="9.4442759"
    sodipodi:version="0.32"
    viewBox="0 0 622.81 702.29"
-   inkscape:export-filename="/home/egore/workspace/lincity-images/lightindustry.png"
+   inkscape:export-filename="/home/cinthia/Escritorio/tvdumsa/images/logo.png"
    sodipodi:docname="logo.svg"
    id="svg1">
   <defs
@@ -200,35 +200,6 @@
        r="101.88" />
     <meshgradient
        inkscape:collect="always"
-       id="meshgradient2416"
-       gradientUnits="userSpaceOnUse"
-       x="79.316147"
-       y="239.40598">
-      <meshrow
-         id="meshrow2418">
-        <meshpatch
-           id="meshpatch2420">
-          <stop
-             path="c 21.5001,0  43.0001,0  64.5002,0"
-             style="stop-color:#ffffff;stop-opacity:1"
-             id="stop2422" />
-          <stop
-             path="c 0,151.991  0,303.981  0,455.972"
-             style="stop-color:#000000;stop-opacity:1"
-             id="stop2424" />
-          <stop
-             path="c -21.5001,0  -43.0001,0  -64.5002,0"
-             style="stop-color:#ffffff;stop-opacity:1"
-             id="stop2426" />
-          <stop
-             path="c 0,-151.991  0,-303.981  0,-455.972"
-             style="stop-color:#000000;stop-opacity:1"
-             id="stop2428" />
-        </meshpatch>
-      </meshrow>
-    </meshgradient>
-    <meshgradient
-       inkscape:collect="always"
        id="meshgradient2446"
        gradientUnits="userSpaceOnUse"
        x="140.59308"
@@ -256,35 +227,6 @@
         </meshpatch>
       </meshrow>
     </meshgradient>
-    <meshgradient
-       inkscape:collect="always"
-       id="meshgradient2460"
-       gradientUnits="userSpaceOnUse"
-       x="80.995529"
-       y="181.96497">
-      <meshrow
-         id="meshrow2462">
-        <meshpatch
-           id="meshpatch2464">
-          <stop
-             path="c 190.352,0  380.704,0  571.056,0"
-             style="stop-color:#ffffff;stop-opacity:1"
-             id="stop2466" />
-          <stop
-             path="c 0,22.127  0,44.254  0,66.381"
-             style="stop-color:#434343;stop-opacity:1"
-             id="stop2468" />
-          <stop
-             path="c -190.352,0  -380.704,0  -571.056,0"
-             style="stop-color:#ffffff;stop-opacity:1"
-             id="stop2470" />
-          <stop
-             path="c 0,-22.127  0,-44.254  0,-66.381"
-             style="stop-color:#434343;stop-opacity:1"
-             id="stop2472" />
-        </meshpatch>
-      </meshrow>
-    </meshgradient>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -299,8 +241,8 @@
      showgrid="false"
      borderopacity="1.0"
      inkscape:current-layer="layer1"
-     inkscape:cx="643.61914"
-     inkscape:cy="250.51142"
+     inkscape:cx="-355.52274"
+     inkscape:cy="290.10941"
      inkscape:window-width="1848"
      inkscape:pageopacity="0.0"
      showguides="false"
@@ -321,7 +263,7 @@
        inkscape:export-xdpi="14.450000" />
     <path
        id="path1062"
-       style="fill:url(#meshgradient2416);fill-rule:evenodd;stroke:#000000;stroke-width:5.44486952;stroke-linecap:round;stroke-linejoin:round;fill-opacity:1"
+       style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:5.44486952;stroke-linecap:round;stroke-linejoin:round;fill-opacity:1"
        d="m 142.66162,245.7762 c -21.11516,-2.12341 -40.54919,-4.24682 -63.345472,-6.37023 l 1.54328,425.58312 62.956912,30.38878 z"
        inkscape:export-ydpi="14.450000"
        sodipodi:nodetypes="ccccc"
@@ -330,7 +272,7 @@
        inkscape:export-xdpi="14.450000" />
     <path
        id="path1064"
-       style="fill:url(#meshgradient2460);fill-rule:evenodd;stroke:#000000;stroke-width:7.89552116;stroke-linecap:round;stroke-linejoin:round;fill-opacity:1"
+       style="fill:#000000;fill-rule:evenodd;stroke:#000000;stroke-width:7.89552116;stroke-linecap:round;stroke-linejoin:round;fill-opacity:1"
        d="m 80.995527,240.28985 c 52.138173,7.86165 39.171913,5.07611 59.597553,8.0561 l 511.45817,-66.38099 -145.62187,2.93695 z"
        inkscape:export-ydpi="14.450000"
        sodipodi:nodetypes="ccccc"
@@ -718,7 +660,7 @@
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
         <cc:license
-           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
         <dc:publisher>
           <cc:Agent
              rdf:about="http://openclipart.org/">
@@ -727,7 +669,7 @@
         </dc:publisher>
       </cc:Work>
       <cc:License
-         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
         <cc:permits
            rdf:resource="http://creativecommons.org/ns#Reproduction" />
         <cc:permits
