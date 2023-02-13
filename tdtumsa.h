@@ -90,7 +90,15 @@ public:
 
 private:
     QLabel *PresentationLabel; /**< TODO: describe */
-
+    LabelLineEdit *WorkDirectory;
+    QPushButton *WorkDirectory_button;
+    QLabel *CreditLabel;
+public slots:
+     /**
+     * @brief
+     *
+     */
+    void notifyFileLoad();
 };
 
 /**

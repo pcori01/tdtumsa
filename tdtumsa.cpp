@@ -27,15 +27,37 @@ IntroPage::IntroPage(QWidget *parent)
 {
     setTitle(tr("Introducción"));
     setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
-
-    PresentationLabel = new QLabel(tr("El Presente programa le permitirá operar el equipo transmisor de "
-                                      "televisión digital terrestre a través de todos los procesos."));
+    setSubTitle(tr("El Presente programa le permitirá operar el equipo transmisor de "
+                   "televisión digital terrestre a través de todos los procesos."));
+    /************************************************
+     *  ... Agregar Directorio de Trabajo
+     ***********************************************/
+    PresentationLabel = new QLabel(tr("Introduzca el \"Directorio de Salida\" para el Paquete TS"));
     PresentationLabel->setWordWrap(true);
-
     QVBoxLayout *layout = new QVBoxLayout;
+    WorkDirectory = new LabelLineEdit(this,tr("Directorio de Trabajo"));
+    WorkDirectory_button  = new QPushButton(tr("Buscar"));
+    WorkDirectory->setMaximumWidth(700);
+    WorkDirectory->layout()->addWidget(WorkDirectory_button); 
+    QString uname = qgetenv("USER");
+    WorkDirectory->setText("/home/"+uname+"/tdt\n");
+    connect(WorkDirectory_button,SIGNAL(clicked()),this,SLOT(notifyFileLoad()));
+    /************************************************
+     *  ... Agregar Creditos
+     ***********************************************/
+    CreditLabel = new QLabel(tr("<p><em><span style='color:#ff0000'><strong>Interfaz Desarrollada por Paul Cori. Cualquier consulta o reporte a pcori01@gmail.com</strong></span></em></p>"));
+    CreditLabel->setTextFormat(Qt::RichText);
+    /************************************************
+     *  ... Agrega Elementos al layout
+     ***********************************************/
     layout->addWidget(PresentationLabel);
+    layout->addWidget(WorkDirectory);
+    layout->addWidget(CreditLabel);
     setLayout(layout);
-
+    /************************************************
+     *  ... Registra el Directorio de Trabajo
+     ***********************************************/
+    registerField("WorkDirectory", WorkDirectory,"text");
 }
 
 int IntroPage::nextId() const
@@ -49,6 +71,11 @@ void IntroPage::initializePage()
 {
 }
 
+void IntroPage::notifyFileLoad()
+{
+    QString Path = QFileDialog::getExistingDirectory(this,tr("Seleccionar Directorio de Trabajo"), "");
+    WorkDirectory->setText(Path);
+}
 
 PlanPage::PlanPage(QWidget *parent)
     : QWizardPage(parent)
@@ -980,7 +1007,6 @@ MuxPage::MuxPage(QWidget *parent)
             AITTransportProtocolControlDesc[i]->layout()->addWidget(AITTransportProtocolControlDesc_item_widgets[i]->last());
         }
 
-
         AITAppDesc[i]= new SectionDescriptor(this,tr("Application_Descriptor"));
         AITApp_descriptors_loop[i]->layout()->addWidget(AITAppDesc[i]);
 
@@ -1152,9 +1178,7 @@ void MuxPage::MuxChanges(int value)
             EITelements[i]->at(1)->setRange(min,max);
             SDTServiceLoopElementWidget[i][0]->setRange(min,max);
             PATServiceID[i]->setValue(((finalvalue)&(0xFFE7))|aux);
-
         }
-
     }
     PATServicePID[0]->setRange((PATServiceID[0]->Value()&0x0007)+0x1FC8,(PATServiceID[0]->Value()&0x0007)+0x1FC8);
 
@@ -1173,8 +1197,6 @@ bool MuxPage::validatePage()
 
     return true;
 }
-
-
 
 
 FinalPage::FinalPage(QWidget *parent)
@@ -1206,102 +1228,58 @@ FinalPage::FinalPage(QWidget *parent)
 void FinalPage::execute()
 {
     QString uname = qgetenv("USER");
-    QString path ="/home/"+uname+"/tdt/";
-    QString pathxml ="/home/"+uname+"/DekTec/";
+    QString path = field("WorkDirectory").toString();
     QDir dir;
     QFile file(path + "script.sh");
     QFile filepy(path + "tables.py");
-    QFile filexml("/home/"+uname+"/DekTec/config.xml");
     QFile nullts(path+"null.ts");
 
     if(!dir.exists(path))
     {
         dir.mkpath(path);
-        qDebug()<<"directory now exists";
-     }
-    if(!dir.exists(pathxml))
-    {
-        dir.mkpath(pathxml);
-        qDebug()<<"directory now exists";
-     }
+    }
     if ( file.open(QIODevice::WriteOnly) )
     {
-        qDebug()<<"file now exists";
+        QTextStream out(&file);
+        out<<Text[0]->toPlainText();
+        file.close();
     }
-    QTextStream out(&file);
-    out<<Text[0]->toPlainText();
-    file.close();
 
     if ( filepy.open(QIODevice::WriteOnly) )
     {
-        qDebug()<<"file now exists";
-    }
-    QTextStream outpy(&filepy);
-    outpy<<Text[1]->toPlainText();
-    filepy.close();
-
-    if ( filexml.open(QIODevice::WriteOnly) )
-    {
-        qDebug()<<"file now exists";
+        QTextStream outpy(&filepy);
+        outpy<<Text[1]->toPlainText();
+        filepy.close();
     }
 
     QFile(path + "script.sh").setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
 
     if ( nullts.open(QIODevice::WriteOnly) )
     {
-        qDebug()<<"file now exists";
+        static const char mydata[] = {
+           '\x47','\x1F','\xFF','\x10','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
+           '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00'
+        };
+        QDataStream outnullts(&nullts);
+        outnullts.writeRawData(mydata, sizeof(mydata));
+        nullts.close();
     }
-    static const char mydata[] = {
-       '\x47','\x1F','\xFF','\x10','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00',
-       '\x00','\x00','\x00','\x00','\x00','\x00','\x00','\x00'
-    };
-    QDataStream outnullts(&nullts);
-    outnullts.writeRawData(mydata, sizeof(mydata));
-    nullts.close();
 
-#if 0
-    QString program = "cmd";
-    QStringList arguments;
-    QProcess myProcess;
-    //arguments <<"-c"<<"ffmpeg -version | grep -o -E 'libfdk-aac|libx264'";
-    arguments <<"/k"<<"ping 8.8.8.8";
-
-    myProcess.startDetached(program,arguments);
-    myProcess.waitForFinished();
-    QByteArray stdoutput=myProcess.readAllStandardOutput();
-    QByteArray stderror=myProcess.readAllStandardError();
-    myProcess.close();
-
-    qDebug()<<"ejecutando"<<stdoutput<<"error"<<stderror;
-#endif
-
-#if 0
-    QString program = ""libfdk-aac\nlibx264\n"";
-    QStringList arguments;
-    QProcess *myProcess = new QProcess;
-    arguments <<"/k"<<"ping 8.8.8.8";
-    myProcess->startDetached(program,arguments);
-    myProcess->waitForFinished();
-    QByteArray stdoutput=myProcess->readAllStandardOutput();
-    QByteArray stderror=myProcess->readAllStandardError();
-    qDebug()<<"ejecutando"<<stdoutput<<stderror;
-#endif
-#ifdef Q_OS_LINUX
     QString program = "gnome-terminal";
     QStringList arguments;
     arguments <<"-e"<<path + "script.sh";
     QProcess *myProcess = new QProcess;
     myProcess->start(program,arguments);
-#endif
+
 }
 void FinalPage::initializePage()
 {
@@ -1321,14 +1299,9 @@ void FinalPage::initializePage()
 
     }
     bitratetotal=bitratetotal*1.15;
-    QString uname = qgetenv("USER");
-    #ifdef Q_OS_WIN
-        strCodeMux.append("cd \\home\\"+uname+"\\tdt\n");
-    #endif
-    #ifdef Q_OS_LINUX
-        strCodeMux.append("cd /home/"+uname+"/tdt\n");
-    #endif
-    strCodeMux.append("python tables.py\n");
+    strCodeMux.append("cd "+field("WorkDirectory").toString());
+
+    strCodeMux.append("\npython tables.py\n");
     QString PathVideo, LetterDisk;
     strCodeMux.append("ffmpeg -y ");
     for(int it=0;it<(nservice+oneseg-1);it++){

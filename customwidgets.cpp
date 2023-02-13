@@ -75,7 +75,7 @@ LabelLineEdit::LabelLineEdit(QWidget *parent, QString text)
     m_LineEdit = new QLineEdit;
     m_Label->setBuddy(m_LineEdit);
     m_HBoxLayout = new QHBoxLayout;
-    m_HBoxLayout->setSizeConstraint(QLayout::SetFixedSize);
+ // m_HBoxLayout->setSizeConstraint(QLayout::SetFixedSize);
     m_HBoxLayout->addWidget(m_Label);
     m_HBoxLayout->addWidget(m_LineEdit);
     connect(m_LineEdit,SIGNAL(textChanged(QString)),this,SLOT(setText(QString)));
