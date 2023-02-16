@@ -1,6 +1,8 @@
 <map id="LabelLineEdit::setText" name="LabelLineEdit::setText">
-<area shape="rect" id="node1" title=" " alt="" coords="257,56,421,83"/>
-<area shape="rect" id="node2" href="$class_mux_page.html#a7611aa5d9383d4df075403f7f4e31b08" title=" " alt="" coords="18,5,197,32"/>
-<area shape="rect" id="node3" href="$class_label_line_edit.html#af9fb1962ca96cfca96cadfe6d4f2fd42" title=" " alt="" coords="5,56,209,83"/>
-<area shape="rect" id="node4" href="$class_mux_page.html#aefc508c9ea86f2af91cd157ecd19868b" title=" " alt="" coords="32,107,183,133"/>
+<area shape="rect" id="node1" title=" " alt="" coords="460,107,624,133"/>
+<area shape="rect" id="node2" href="$class_mux_page.html#a7611aa5d9383d4df075403f7f4e31b08" title=" " alt="" coords="221,5,399,32"/>
+<area shape="rect" id="node3" href="$class_intro_page.html#af6352b014748872d39836ddd4b8c88b7" title=" " alt="" coords="5,132,160,159"/>
+<area shape="rect" id="node4" href="$class_label_line_edit.html#af9fb1962ca96cfca96cadfe6d4f2fd42" title=" " alt="" coords="208,107,412,133"/>
+<area shape="rect" id="node5" href="$class_mux_page.html#aefc508c9ea86f2af91cd157ecd19868b" title=" " alt="" coords="235,157,385,184"/>
+<area shape="rect" id="node6" href="$class_intro_page.html#ab6006809ddfe2d6edf80dd83abd99a13" title=" " alt="" coords="219,208,401,235"/>
 </map>

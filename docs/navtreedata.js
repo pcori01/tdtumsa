@@ -50,7 +50,7 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "_kick_python_syntax_highlighter_8h.html",
-"class_mux_page.html#abe43cad2ad7ead8babc24f0021713225"
+"class_mux_page.html#ab7cd30ddd412d9db68d3a534773965c0"
 ];
 
 var SYNCONMSG = 'click en deshabilitar sincronización';

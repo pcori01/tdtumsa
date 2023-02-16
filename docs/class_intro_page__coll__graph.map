@@ -1,4 +1,6 @@
 <map id="IntroPage" name="IntroPage">
-<area shape="rect" id="node1" title=" " alt="" coords="5,131,153,237"/>
-<area shape="rect" id="node2" title=" " alt="" coords="25,5,134,83"/>
+<area shape="rect" id="node1" title=" " alt="" coords="5,360,180,511"/>
+<area shape="rect" id="node2" title=" " alt="" coords="17,176,126,253"/>
+<area shape="rect" id="node3" href="$class_label_line_edit.html" title=" " alt="" coords="151,132,285,297"/>
+<area shape="rect" id="node4" title=" " alt="" coords="179,5,257,83"/>
 </map>
