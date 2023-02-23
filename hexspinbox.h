@@ -25,6 +25,7 @@ public:
      * @param parent
      */
     HexSpinBox(QWidget *parent = nullptr);
+    void setMAXRange(unsigned int max);
 
 protected:
     /**
@@ -52,6 +53,7 @@ protected:
 
 private:
     QRegExpValidator *validator; /**< TODO: describe */
+    unsigned int m_maxRange = UINT_MAX;
 };
 
 #endif // HEXSPINBOX_H

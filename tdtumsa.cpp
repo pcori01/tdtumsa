@@ -40,7 +40,7 @@ IntroPage::IntroPage(QWidget *parent)
     WorkDirectory->setMaximumWidth(700);
     WorkDirectory->layout()->addWidget(WorkDirectory_button); 
     QString uname = qgetenv("USER");
-    WorkDirectory->setText("/home/"+uname+"/tdt\n");
+    WorkDirectory->setText("/home/"+uname);
     connect(WorkDirectory_button,SIGNAL(clicked()),this,SLOT(notifyFileLoad()));
     /************************************************
      *  ... Agregar Creditos
@@ -86,11 +86,11 @@ PlanPage::PlanPage(QWidget *parent)
     setTitle(tr("Planificacion Radioelectrica"));
     setSubTitle(tr("Seleccione el Tipo de Planificación que desea utilizar "
                    "para ser transmitida."));
+
     QGridLayout *layout = new QGridLayout;
     OneSegCheckBox = new QCheckBox(tr("Servicio One-Seg"));
     layout->addWidget(OneSegCheckBox, 0, 1);
     registerField("1seg", OneSegCheckBox);
-
 
 
     for(int i=0;i<5;i++)
@@ -125,27 +125,27 @@ bool PlanPage::validatePage()
 {
     if(field("option0").toBool())
     {
-        IndexP=0;
+        setindexPlan(0);
         setSevicesPlan(2);
     }
     if(field("option1").toBool())
     {
-        IndexP=1;
+        setindexPlan(1);
         setSevicesPlan(3);
     }
     if(field("option2").toBool())
     {
-        IndexP=2;
+        setindexPlan(2);
         setSevicesPlan(3);
     }
     if(field("option3").toBool())
     {
-        IndexP=3;
+        setindexPlan(3);
         setSevicesPlan(4);
     }
     if(field("option4").toBool())
     {
-        IndexP=4;
+        setindexPlan(4);
         setSevicesPlan(5);
     }
     return  true;
@@ -228,6 +228,7 @@ CodePage::CodePage(QWidget *parent)
 
         audioBitrateLabel[i] = new QLabel(tr("Bitrate \nAudio [Kbps]:"));
         audioSlider[i] = new QSlider(Qt::Horizontal);
+        audioSlider[i]->setMaximumWidth(80);
         audioSpinBox[i] = new QSpinBox;
         audioSpinBox[i]->setMaximumWidth(80);
         aSampleRateLabel[i] = new QLabel(tr("Frecuencia \nde Muestreo:"));
@@ -243,13 +244,16 @@ CodePage::CodePage(QWidget *parent)
         registerField("AudioSampleRate"+QVariant(i).toString(),aSampleRateComboBox[i],"currentText",SIGNAL(valueChanged(int)));
 
         GingaLabel[i] = new QLabel(tr("Archivo \nde Ginga:"));
-        GingaRateLabel[i] = new QLabel(tr("BitRate \nde Ginga:"));
+        GingaRateLabel[i] = new QLabel(tr("BitRate \nde Ginga [Mbps]:"));
 
         GingaLineEdit[i] = new QLineEdit;
         registerField("GingaAppDir"+QVariant(i).toString(), GingaLineEdit[i]);
         GingaLabel[i]->setBuddy(GingaLineEdit[i]);
         GingaSlider[i] = new DoubleSlider;
+        GingaSlider[i]->setRange(4,40);
+        GingaSlider[i]->setSingleStep(1);
         GingaSpinBox[i] = new QDoubleSpinBox;
+        GingaSpinBox[i]->setRange(0.4,4.0);
         registerField("GingaBitRate"+QVariant(i).toString(), GingaSpinBox[i],"value","valueChanged");
 
         GingaButton[i] = new QPushButton(tr("Buscar"));
@@ -313,7 +317,6 @@ CodePage::CodePage(QWidget *parent)
 
         connect(videoButton[i],SIGNAL(released()),this,SLOT(notifyFileLoad()));
         connect(GingaButton[i],SIGNAL(released()),this,SLOT(notifyFileLoad()));
-
 
         audioSlider[i]->setRange(96,256);
         audioSpinBox[i]->setRange(96,256);
@@ -709,10 +712,24 @@ MuxPage::MuxPage(QWidget *parent)
 
     TOT_descriptor_Loop = new SectionLoop(this,tr("descriptor_loop"));
     layoutTab[3]->addWidget(TOT_descriptor_Loop);
-    TOT_Label->append(new QLabel("<span style=\"color:#ff0000\"><strong>NO DESCRIPTORES VALIDOS PARA BOLIVIA, AL NO TENER HORARIO DE INVIERNO</strong></span>"));
-    TOT_descriptor_Loop->layout()->addWidget(TOT_Label->last());
-    TOT_Label->last()->setTextFormat(Qt::RichText);
-    TOT_Label->last()->setFrameStyle(QFrame::Panel | QFrame::Plain);
+
+    TOT_local_time_offset_descriptor = new SectionDescriptor(this,"local_time_offset_descriptor");
+    TOT_descriptor_Loop->layout()->addWidget(TOT_local_time_offset_descriptor);
+    TOT_ISO_639_language_code = new LabelLineEdit(this,"ISO_639_language_code");
+    TOT_ISO_639_language_code->setText("SPA");
+    TOT_ISO_639_language_code->setLength(3);
+    TOT_local_time_offset_descriptor->layout()->addWidget(TOT_ISO_639_language_code);
+
+    TOT_local_time_offset_descriptor_Widgets= new QList<LabelHexSpinBox*>;
+    foreach (const IntParam &item, TOT_local_time_offset_descriptor_item) {
+        TOT_local_time_offset_descriptor_Widgets->append(new LabelHexSpinBox(this,item.name));
+        TOT_local_time_offset_descriptor_Widgets->last()->setRange(item.min,item.max);
+        TOT_local_time_offset_descriptor_Widgets->last()->setValue(item.value);
+        TOT_local_time_offset_descriptor->layout()->addWidget(TOT_local_time_offset_descriptor_Widgets->last());
+        registerField(item.name,TOT_local_time_offset_descriptor_Widgets->last(),"value");
+    }
+
+
 
     connect(PATTSID,SIGNAL(valueChanged(int)),
                     NITTSID,SLOT(setValue(int)));
@@ -828,14 +845,14 @@ MuxPage::MuxPage(QWidget *parent)
         PMTVideoItem[i][1]->setValue(0x40+i);
 
         PMTAITItem[i] = new ElementSectionDescriptor(this);
-        for(int it=0;it<2;it++){
-            PMTAITWidgetItem[i][it]=new LabelHexSpinBox(this,PMTStreamLoopText[2][it]);
-            PMTAITItem[i]->layout()->addWidget(PMTAITWidgetItem[i][it]);
-            registerField(PMTStreamLoopText[2][it]+QVariant(i).toString(),PMTAITWidgetItem[i][it],"value");
+        PMTAITWidgetItem[i] = new QList<LabelHexSpinBox*>;
+        foreach (const IntParam &item, PMTAIT_item) {
+            PMTAITWidgetItem[i]->append(new LabelHexSpinBox(this,item.name));
+            PMTAITWidgetItem[i]->last()->setRange(item.min,item.max);
+            PMTAITWidgetItem[i]->last()->setValue(item.value+i);
+            PMTAITItem[i]->layout()->addWidget(PMTAITWidgetItem[i]->last());
+            registerField(item.name+QVariant(i).toString(),PMTAITWidgetItem[i]->last(),"value");
         }
-        PMTAITWidgetItem[i][0]->setRange(0x05,0x05);
-        PMTAITWidgetItem[i][1]->setRange(0x30,0x1FC7);
-        PMTAITWidgetItem[i][1]->setValue(0x7D0+i);
 
         PMTAIT[i]->layout()->addWidget(PMTAITItem[i]);
 
@@ -872,12 +889,14 @@ MuxPage::MuxPage(QWidget *parent)
         }
 
         PMTDSMCCItem[i] = new ElementSectionDescriptor(this);
-        for(int it=0;it<2;it++){
-            PMTDSMCCLabelItem[i][it]=new QLabel(PMTStreamLoopText[3][it]);
-            PMTDSMCCItem[i]->layout()->addWidget(PMTDSMCCLabelItem[i][it]);
-            PMTDSMCCHexspinBoxItem[i][it] = new HexSpinBox;
-            PMTDSMCCItem[i]->layout()->addWidget(PMTDSMCCHexspinBoxItem[i][it]);
-            registerField(PMTStreamLoopText[3][it]+QVariant(i).toString(),PMTDSMCCHexspinBoxItem[i][it]);
+
+        PMTDSMCCWidgetItem[i] = new QList<LabelHexSpinBox*>;
+        foreach (const IntParam &item, PMTDSMCC_item) {
+            PMTDSMCCWidgetItem[i]->append(new LabelHexSpinBox(this,item.name));
+            PMTDSMCCWidgetItem[i]->last()->setRange(item.min,item.max);
+            PMTDSMCCWidgetItem[i]->last()->setValue(item.value+i);
+            PMTDSMCCItem[i]->layout()->addWidget(PMTDSMCCWidgetItem[i]->last());
+            registerField(item.name+QVariant(i).toString(),PMTDSMCCWidgetItem[i]->last(),"value");
         }
 
         PMTDSMCC[i]->layout()->addWidget(PMTDSMCCItem[i]);
@@ -888,13 +907,15 @@ MuxPage::MuxPage(QWidget *parent)
         PMTDSMCCassociation_tag_descriptor[i] =new SectionDescriptor(this,"association_tag_descriptor");
         PMTDSMCCelement_info_descriptor_loop[i]->layout()->addWidget(PMTDSMCCassociation_tag_descriptor[i]);
 
-        for(int it=0;it<5;it++){
-            PMTDSMCCassociation_tag_descriptorLabel[i][it] = new QLabel(PMTDSMCCassociation_tag_descriptorText[it]);
-            PMTDSMCCassociation_tag_descriptor[i]->layout()->addWidget(PMTDSMCCassociation_tag_descriptorLabel[i][it]);
-            PMTDSMCCassociation_tag_descriptorHexSpinBox[i][it] = new HexSpinBox;
-            PMTDSMCCassociation_tag_descriptor[i]->layout()->addWidget(PMTDSMCCassociation_tag_descriptorHexSpinBox[i][it]);
-
+        PMTDSMCCassociation_tag_descriptorWidgetItem[i] = new QList<LabelHexSpinBox*>;
+        foreach (const IntParam &item, PMTDSMCCassociation_tag_descriptor_item) {
+            PMTDSMCCassociation_tag_descriptorWidgetItem[i]->append(new LabelHexSpinBox(this,item.name));
+            PMTDSMCCassociation_tag_descriptorWidgetItem[i]->last()->setRange(item.min,item.max);
+            PMTDSMCCassociation_tag_descriptorWidgetItem[i]->last()->setValue((item.name=="association_tag")?item.value+i:item.value);
+            PMTDSMCCassociation_tag_descriptor[i]->layout()->addWidget(PMTDSMCCassociation_tag_descriptorWidgetItem[i]->last());
+            registerField(item.name+QVariant(i).toString(),PMTDSMCCassociation_tag_descriptorWidgetItem[i]->last(),"value");
         }
+
 
         PMTDSMCCdata_component_descriptor[i] = new SectionDescriptor(this,"data_component_descriptor");
         PMTDSMCCelement_info_descriptor_loop[i]->layout()->addWidget(PMTDSMCCdata_component_descriptor[i]);
@@ -926,6 +947,9 @@ MuxPage::MuxPage(QWidget *parent)
         foreach (const IntParam &item, EIT_items) {
             EITelements[i]->append(new LabelHexSpinBox(this,item.name));
             EIT_loop_item[i]->layout()->addWidget(EITelements[i]->last());
+            EITelements[i]->last()->setRange(item.min,item.max);
+            EITelements[i]->last()->setValue(item.value);
+
         }
 
         EIT_event_loop[i] = new SectionLoop(this,tr("Event Loop"));
@@ -940,6 +964,24 @@ MuxPage::MuxPage(QWidget *parent)
             EIT_event_loop_widgets[i]->last()->setRange(item.min,item.max);
             EIT_event_loop_widgets[i]->last()->setValue(item.value);
             EIT_event_loop_item[i]->layout()->addWidget(EIT_event_loop_widgets[i]->last());
+            registerField(item.name+QVariant(i).toString(),EIT_event_loop_widgets[i]->last(),"value");
+
+        }
+
+        EIT_event_descriptor_loop[i] = new SectionLoop(this,"Event Loop Descriptor"); /**< TODO: describe */
+        EIT_event_descriptor_loop[i]->setMaximumWidth(3000);
+        EIT_event_loop[i]->layout()->addWidget(EIT_event_descriptor_loop[i]);
+
+        EIT_short_event_descriptor[i] = new SectionDescriptor(this,tr("Short Event Descriptor")); /**< TODO: describe */
+        EIT_short_event_descriptor[i]->setMaximumWidth(1200);
+        EIT_event_descriptor_loop[i]->layout()->addWidget(EIT_short_event_descriptor[i]);
+        EIT_short_event_descriptor_widgets[i]= new QList<LabelLineEdit*>;
+
+        foreach(StringParam item, EIT_short_event_descriptor_items){
+            EIT_short_event_descriptor_widgets[i]->append(new LabelLineEdit(this,item.name));
+            EIT_short_event_descriptor_widgets[i]->last()->setText(item.text);
+            EIT_short_event_descriptor_widgets[i]->last()->setLength(item.length);
+            EIT_short_event_descriptor[i]->layout()->addWidget(EIT_short_event_descriptor_widgets[i]->last());
         }
 
         EIT_follow_loop[i]=new SectionLoop(this,tr("EIT Siguiente"));
@@ -967,8 +1009,9 @@ MuxPage::MuxPage(QWidget *parent)
             EIT_follow_event_loop_widgets[i]->last()->setRange(item.min,item.max);
             EIT_follow_event_loop_widgets[i]->last()->setValue(item.value);
             EIT_follow_event_loop_item[i]->layout()->addWidget(EIT_follow_event_loop_widgets[i]->last());
-        }
+            registerField("follow_"+item.name+QVariant(i).toString(),EIT_follow_event_loop_widgets[i]->last(),"value");
 
+        }
 
         layoutTab[3*i+6]->setSizeConstraint(QLayout::SetFixedSize);
 
@@ -1220,6 +1263,8 @@ FinalPage::FinalPage(QWidget *parent)
     }
     execButton = new QPushButton(tr("Ejecutar"));
     execButton->setMaximumWidth(100);
+    execButton->setToolTip("Apreta para Ejecutar");
+    this->setFocusProxy(execButton);
     connect(execButton,SIGNAL(clicked()),this,SLOT(execute()));
     layout->addWidget(execButton);
     layout->itemAt(1)->setAlignment(Qt::AlignHCenter);
@@ -1230,9 +1275,9 @@ void FinalPage::execute()
     QString uname = qgetenv("USER");
     QString path = field("WorkDirectory").toString();
     QDir dir;
-    QFile file(path + "script.sh");
-    QFile filepy(path + "tables.py");
-    QFile nullts(path+"null.ts");
+    QFile file(path + "/script.sh");
+    QFile filepy(path + "/tables.py");
+    QFile nullts(path+"/null.ts");
 
     if(!dir.exists(path))
     {
@@ -1252,7 +1297,7 @@ void FinalPage::execute()
         filepy.close();
     }
 
-    QFile(path + "script.sh").setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
+    QFile(path + "/script.sh").setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner);
 
     if ( nullts.open(QIODevice::WriteOnly) )
     {
@@ -1276,7 +1321,7 @@ void FinalPage::execute()
 
     QString program = "gnome-terminal";
     QStringList arguments;
-    arguments <<"-e"<<path + "script.sh";
+    arguments <<"-e"<<path + "/script.sh";
     QProcess *myProcess = new QProcess;
     myProcess->start(program,arguments);
 
@@ -1354,7 +1399,7 @@ void FinalPage::initializePage()
     strCodeMux.append("-f mpegts -mpegts_flags latm -mpegts_service_type digital_tv -muxrate "+QString("%1").arg(bitratetotal)+" -y AVTS.ts\n");
 
 
-    strCodeMux.append("tsmodder AVTS.ts +0 null.ts +17 null.ts +4096 null.ts > filterAVTS.ts\n");
+    strCodeMux.append("tsmodder AVTS.ts +0 null.ts +17 null.ts +4096 null.ts > AVmodded.ts\n");
 
 
     for(int it=0;it<(nservice+oneseg-1);it++){
@@ -1362,7 +1407,7 @@ void FinalPage::initializePage()
         auxString2=QVariant(it-oneseg+1).toString();
         if(field("GingaApp"+auxString2).toBool()){
             strCodeMux.append("cp -a \""+field(QString("GingaAppDir"+auxString2)).toString()+"/.\" app_ginga"+auxString1+"\n");
-            strCodeMux.append("oc-update app_ginga"+auxString1+" 0x0C 1 "+field("PID DSMCC"+auxString2).toString()+" 2\n");
+            strCodeMux.append("oc-update app_ginga"+auxString1+" "+field("association_tag"+auxString2).toString()+" 1 "+field("PID DSMCC"+auxString2).toString()+" 2\n");
         }
     }
 
@@ -1380,19 +1425,17 @@ void FinalPage::initializePage()
             bitratetotal+=field("VideoBitRate"+auxString2).toInt()*(1000000);
         }
         if(field("GingaApp"+auxString2).toBool())
-            strCodeMux.append("b:"+QString("%1").arg(field("GingaBitRate"+auxString2).toInt()*(1000))+" app_ginga"+auxString1+".ts "
+            strCodeMux.append("b:"+QString("%1").arg(int(field("GingaBitRate"+auxString2).toFloat()*(1000000.0)))+" app_ginga"+auxString1+".ts "
                                "b:3008 ait"+auxString1+".ts ");
 
         bitratetotal+=field("AudioBitRate"+auxString2).toInt()*(1000);
 
     }
     bitratetotal=bitratetotal*1.15;
-    strCodeMux.append(QString("c:%1 filterAVTS.ts o:29958294 null.ts > preout.ts\n").arg(bitratetotal));
-    strCodeMux.append("tstdt preout.ts > preout_fixtime.ts\n");
-    strCodeMux.append("tspcrstamp preout_fixtime.ts 29958294 > output.ts\n");
-
-
-
+    strCodeMux.append(QString("c:%1 AVmodded.ts o:29958294 null.ts > preout.ts\n").arg(bitratetotal));
+ // strCodeMux.append("tstdt preout.ts > preout_fixtime.ts\n");
+    strCodeMux.append("tspcrstamp preout.ts 29958294 > output.ts\n");
+    strCodeMux.append("nautilus "+field("WorkDirectory").toString()+"\n");
 
     Text[0]->setPlainText(strCodeMux);
     QString strTables;
@@ -1423,7 +1466,11 @@ void FinalPage::initializePage()
         strTables.append("tvd_pmt"+auxString1+"_pid = "+field("PID PMT"+auxString2).toString()+"\n");
         strTables.append("tvd_service_id_"+auxString1+" = "+field("ServiceID"+auxString2).toString()+"\n");
         if(field("GingaApp"+QVariant(it-oneseg+1).toString()).toBool()){
-            strTables.append("tvd_ait_pid_"+auxString1+" = "+field("PID AIT"+auxString2).toString()+"\n");
+            strTables.append("tvd_ait_pid_"+auxString1+" = "+field("PID AIT"+auxString2).toString()+"\n"
+                             "tvd_dsmcc_pid_"+auxString1+" = "+field("PID AIT"+auxString2).toString()+"\n"
+                             "dsmcc_association_tag_"+auxString1+" = "+field("association_tag"+auxString2).toString()+"\n"
+                             "dsmcc_carousel_id_"+auxString1+" = 2\n"
+                             );
 
         }
 
@@ -1662,7 +1709,7 @@ void FinalPage::initializePage()
                              "			elementary_PID = "+field("PID DSMCC"+auxString2).toString()+",\n"
                              "			element_info_descriptor_loop = [\n"
                              "				association_tag_descriptor(\n"
-                             "					association_tag = 0x0C,\n"
+                             "					association_tag = dsmcc_association_tag_"+auxString1+",\n"
                              "					use = 0,\n"
                              "					selector_lenght = 0,\n"
                              "					transaction_id = 0x80000000,\n"
@@ -1670,7 +1717,7 @@ void FinalPage::initializePage()
                              "					private_data = \"\",\n"
                              "				),\n"
                              "				stream_identifier_descriptor(\n"
-                             "					component_tag = 0x0C,\n"
+                             "					component_tag = dsmcc_association_tag_"+auxString1+",\n"
                              "				),\n"
                              "				carousel_identifier_descriptor(\n"
                              "					carousel_ID = 2,\n"
@@ -1719,15 +1766,15 @@ void FinalPage::initializePage()
                          "        event_loop = [\n"
                          "	    event_loop_item(\n"
                          "		event_id = 1,\n"
-                         "		start_year = 108, # since 1900\n"
-                         "		start_month = 6, \n"
-                         "		start_day = 10, \n"
-                         "		start_hours = 0x00, # use hex like decimals\n"
-                         "		start_minutes = 0x00,\n"
-                         "		start_seconds = 0x00,\n"
-                         "		duration_hours = 0x23,\n"
-                         "		duration_minutes = 0x00,\n"
-                         "		duration_seconds = 0x00,\n"
+                         "		start_year = "+field("start_year"+auxString2).toString()+", # since 1900\n"
+                         "		start_month = "+field("start_month"+auxString2).toString()+", \n"
+                         "		start_day = "+field("start_day"+auxString2).toString()+", \n"
+                         "		start_hours = 0x"+field("start_hours"+auxString2).toString()+", # use hex like decimals\n"
+                         "		start_minutes = 0x"+field("start_minutes"+auxString2).toString()+",\n"
+                         "		start_seconds = 0x"+field("start_seconds"+auxString2).toString()+",\n"
+                         "		duration_hours = 0x"+field("duration_hours"+auxString2).toString()+",\n"
+                         "		duration_minutes = 0x"+field("duration_minutes"+auxString2).toString()+",\n"
+                         "		duration_seconds = 0x"+field("duration_seconds"+auxString2).toString()+",\n"
                          "		running_status = 4, # 4 service is running, 1 not running, 2 starts in a few seconds, 3 pausing\n"
                          "		free_CA_mode = 0, # 0 means service is not scrambled, 1 means at least a stream is scrambled\n"
                          "		event_descriptor_loop = [\n"
@@ -1755,15 +1802,15 @@ void FinalPage::initializePage()
                          "        event_loop = [\n"
                          "	    event_loop_item(\n"
                          "		event_id = 2, \n"
-                         "		start_year = 108, # since 1900\n"
-                         "		start_month = 06, \n"
-                         "		start_day = 10,\n"
-                         "		start_hours = 0x23,\n"
-                         "		start_minutes = 0x30,\n"
-                         "		start_seconds = 0x00, \n"
-                         "		duration_hours = 0x12, \n"
-                         "		duration_minutes = 0x00,\n"
-                         "		duration_seconds = 0x00, \n"
+                         "		start_year = "+field("follow_start_year"+auxString2).toString()+", # since 1900\n"
+                         "		start_month = "+field("follow_start_month"+auxString2).toString()+", \n"
+                         "		start_day = "+field("follow_start_day"+auxString2).toString()+",\n"
+                         "		start_hours = 0x"+field("follow_start_hours"+auxString2).toString()+",\n"
+                         "		start_minutes = 0x"+field("follow_start_minutes"+auxString2).toString()+",\n"
+                         "		start_seconds = 0x"+field("follow_start_seconds"+auxString2).toString()+", \n"
+                         "		duration_hours = 0x"+field("follow_duration_hours"+auxString2).toString()+", \n"
+                         "		duration_minutes = 0x"+field("follow_duration_minutes"+auxString2).toString()+",\n"
+                         "		duration_seconds = 0x"+field("follow_duration_seconds"+auxString2).toString()+", \n"
                          "		running_status = 4, # 4 service is running, 1 not running, 2 starts in a few seconds, 3 pausing\n"
                          "		free_CA_mode = 0, # 0 means service is not scrambled, 1 means at least a stream is scrambled\n"
                          "		event_descriptor_loop = [\n"
@@ -1786,14 +1833,14 @@ void FinalPage::initializePage()
                          "out.close\n"
                          "out = open(\"./eit"+auxString1+".sec\", \"wb\") # python   flush bug\n"
                          "out.close\n"
-                         "os.system('sec2ts 18 "+QString((it==0)?"-s":" ")+" < ./eit"+auxString1+".sec "+QString((it==0)?">":">>")+" ./eit.ts')\n"
+                         "os.system('sec2ts 18 -s < ./eit"+auxString1+".sec "+QString((it==0)?">":">>")+" ./eit.ts')\n"
                           "\n"
                          "out = open(\"./eit_follow"+auxString1+".sec\", \"wb\")\n"
                          "out.write(eit_follow"+auxString1+".pack())\n"
                          "out.close\n"
                          "out = open(\"./eit_follow"+auxString1+".sec\", \"wb\") # python   flush bug\n"
                          "out.close\n"
-                         "os.system('sec2ts 18 < ./eit_follow"+auxString1+".sec >> ./eit.ts')\n");
+                         "os.system('sec2ts 18 -s < ./eit_follow"+auxString1+".sec >> ./eit.ts')\n");
     }
 
 
@@ -1815,7 +1862,7 @@ void FinalPage::initializePage()
                              "						protocol_id = 0x0001,\n"
                              "						transport_protocol_label = 0,\n"
                              "						remote_connection = 0,\n"
-                             "						component_tag = 0x0C, # association_tag\n"
+                             "						component_tag = dsmcc_association_tag_"+auxString1+", # association_tag\n"
                              "					),\n"
                              "					application_descriptor(\n"
                              "						application_profile = 0x0001,\n"
@@ -1857,6 +1904,5 @@ void FinalPage::initializePage()
 
     Text[1]->setPlainText(strTables);
     pythonHighlighter = new KickPythonSyntaxHighlighter(Text[1]->document());
-
-
+    execButton->setDefault(true);
 }

@@ -1,8 +1,6 @@
 #ifndef CUSTOMWIDGETS_H
 #define CUSTOMWIDGETS_H
 
-//#include <QWidget>
-#include <QtWidgets>
 #include "hexspinbox.h"
 
 /**
@@ -30,7 +28,7 @@ public:
      * @param int
      * @param int
      */
-    void setRange(int,int);
+    void setRange(int,unsigned int);
     const static int HEXSPINBOX = 0; /**< TODO: describe */
     const static int SPINBOX = 1; /**< TODO: describe */
     /**
@@ -105,6 +103,7 @@ public:
         return m_text;
     }
 
+
 private:
 
     QString m_text; /**< TODO: describe */
@@ -135,6 +134,7 @@ public slots:
             emit textChanged(text);
         }
     }
+    void setLength(int length);
 
 };
 

@@ -2,8 +2,6 @@
 #define TVDUMSA_H
 
 #include <QWizard>
-#include <QtWidgets>
-#include <QVariant>
 #include <QDate>
 #include <QTime>
 //#include <QDomDocument>
@@ -108,7 +106,7 @@ public slots:
 class PlanPage : public QWizardPage
 {
     Q_OBJECT
-    Q_PROPERTY(int indexPlan READ priorityChanged WRITE setPriority)
+    Q_PROPERTY(int indexPlan READ indexPlan WRITE setindexPlan)
     Q_PROPERTY(int SevicesPlan READ SevicesPlan WRITE setSevicesPlan)
 
 
@@ -124,7 +122,7 @@ public:
      *
      */
     void cleanupPage() override;
-    /**
+    /**Audiolayout
      * @brief
      *
      */
@@ -141,19 +139,19 @@ public:
 
     /**
      * @brief
-     *
-     * @param priority
+     * Funcion para guardar el indice de los modelos de Planificacion del canal Radioelectrico
+     * @param indexPlan
      */
-    void setPriority(int priority)
+    void setindexPlan(int indexPlan)
     {
-        IndexP = priority;
+        IndexP = indexPlan;
     }
     /**
      * @brief
      *
      * @return QMap<QString, QVariant>
      */
-    int priorityChanged(void)
+    int indexPlan(void)
     {
         return IndexP;
     }
@@ -335,7 +333,12 @@ private:
         int value; /**< TODO: describe */
         int type; /**< TODO: describe */
         int min; /**< TODO: describe */
-        int max; /**< TODO: describe */
+        unsigned int max; /**< TODO: describe */
+    };
+    struct StringParam {
+        QString name; /**< TODO: describe */
+        QString text; /**< TODO: describe */
+        int length;
     };
     QTabWidget *MuxTab; /**< TODO: describe */
     QVBoxLayout *layoutTab[18]; /**< TODO: describe */
@@ -399,6 +402,24 @@ private:
     QList<QLabel*> *TOT_Label; /**< TODO: describe */
     SectionLoop *TOT_descriptor_Loop; /**< TODO: describe */
 
+    SectionDescriptor *TOT_local_time_offset_descriptor;
+    LabelLineEdit *TOT_ISO_639_language_code;
+    QList<LabelHexSpinBox*> *TOT_local_time_offset_descriptor_Widgets; /**< TODO: describe */
+    QList<IntParam> TOT_local_time_offset_descriptor_item = {{"country_region_id",0x0C,LabelHexSpinBox::HEXSPINBOX,0,0xFF}, /**< TODO: describe */
+                                                               {"local_time_offset_polarity",0,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFF},
+                                                               {"local_time_offset_hour",0,LabelHexSpinBox::HEXSPINBOX,5,0xfff}, /**< TODO: describe */
+                                                               {"local_time_offset_minute",0x8000000,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
+                                                               {"year_of_change",0xFFFFFF,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
+                                                               {"month_of_change",0,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFF},
+                                                               {"day_of_change",0,LabelHexSpinBox::HEXSPINBOX,5,0xfff}, /**< TODO: describe */
+                                                               {"hour_of_change",0x8000000,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
+                                                               {"minute_of_change",0xFFFFFF,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
+                                                               {"second_of_change",0,LabelHexSpinBox::HEXSPINBOX,5,0xfff}, /**< TODO: describe */
+                                                               {"next_time_offset_hour",0x8000000,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
+                                                               {"next_time_offset_minute",0xFFFFFF,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
+                                                              };
+
+
     ElementSectionDescriptor *SDTItem; /**< TODO: describe */
     LabelHexSpinBox *SDTTSID; /**< TODO: describe */
     LabelHexSpinBox *SDTNetworkID; /**< TODO: describe */
@@ -439,13 +460,15 @@ private:
 
     SectionLoop *PMTAIT[5]; /**< TODO: describe */
     ElementSectionDescriptor *PMTAITItem[5];
-    LabelHexSpinBox *PMTAITWidgetItem[5][2];
+    QList<LabelHexSpinBox*> *PMTAITWidgetItem[5]; /**< TODO: describe */
+    QList<IntParam> PMTAIT_item = {{"Stream Type AIT",5,LabelHexSpinBox::HEXSPINBOX,5,5}, /**< TODO: describe */
+                                   {"PID AIT",2001,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
+                                  };
 
     SectionLoop *PMTAITelement_info_descriptor_loop[5]; /**< TODO: describe */
 
     SectionDescriptor *PMTAITdata_component_descriptor[5];
     LabelHexSpinBox *PMTAITdata_component_descriptorItem[5];
-
 
     SectionDescriptor *PMTAITadditional_data_component_info[5]; /**< TODO: describe */
     SectionDescriptor *PMTAITait_identifier_info[5]; /**< TODO: describe */
@@ -458,16 +481,29 @@ private:
 
     SectionLoop *PMTDSMCC[5]; /**< TODO: describe */
     ElementSectionDescriptor *PMTDSMCCItem[5];
+    QList<LabelHexSpinBox*> *PMTDSMCCWidgetItem[5]; /**< TODO: describe */
+    QList<IntParam> PMTDSMCC_item = {{"Stream Type DSMCC",0x0B,LabelHexSpinBox::HEXSPINBOX,0x0B,0x0B}, /**< TODO: describe */
+                                   {"PID DSMCC",3001,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
+                                  };
+
     QLabel *PMTDSMCCLabelItem[5][2];
     HexSpinBox *PMTDSMCCHexspinBoxItem[5][2]; /**< TODO: describe */
     SectionLoop *PMTDSMCCelement_info_descriptor_loop[5]; /**< TODO: describe */
 
     SectionDescriptor *PMTDSMCCassociation_tag_descriptor[5];
-    QLabel *PMTDSMCCassociation_tag_descriptorLabel[5][5];
-    HexSpinBox *PMTDSMCCassociation_tag_descriptorHexSpinBox[5][5]; /**< TODO: describe */
+    QList<LabelHexSpinBox*> *PMTDSMCCassociation_tag_descriptorWidgetItem[5]; /**< TODO: describe */
+    QList<IntParam> PMTDSMCCassociation_tag_descriptor_item = {{"association_tag",0x0C,LabelHexSpinBox::HEXSPINBOX,0,0xFF}, /**< TODO: describe */
+                                                               {"use",0,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFF},
+                                                               {"selector_lenght",0,LabelHexSpinBox::HEXSPINBOX,5,0xfff}, /**< TODO: describe */
+                                                               {"transaction_id",0x8000000,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
+                                                               {"timeout",0xFFFFFF,LabelHexSpinBox::HEXSPINBOX,0x0,0x7FFFFFFF},
+                                                              };
+
+
     SectionDescriptor *PMTDSMCCstream_identifier_descriptor[5]; /**< TODO: describe */
     QLabel *PMTDSMCCstream_identifier_descriptorLabel[5]; /**< TODO: describe */
     HexSpinBox *PMTDSMCCstream_identifier_descriptorHexSpinBox[5]; /**< TODO: describe */
+
 
     SectionDescriptor *PMTDSMCCcarousel_identifier_descriptor[5]; /**< TODO: describe */
     QLabel *PMTDSMCCcarousel_identifier_descriptorLabel[5][2]; /**< TODO: describe */
@@ -535,9 +571,9 @@ private:
     SectionDescriptor *EIT_loop_item[5]; /**< TODO: describe */
     QList<LabelHexSpinBox*> *EITelements[5]; /**< TODO: describe */
     QList<IntParam> EIT_items = {{"table_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E}, /**< TODO: describe */
-                                 {"service_id",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
-                                 {"transport_stream_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
-                                 {"original_network_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                 {"service_id",90,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
+                                 {"transport_stream_id",90,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                 {"original_network_id",90,LabelHexSpinBox::HEXSPINBOX,0,65535},
                                 };
 
     SectionLoop *EIT_event_loop[5]; /**< TODO: describe */
@@ -558,16 +594,25 @@ private:
                                             {"free_CA_mode",0,LabelHexSpinBox::HEXSPINBOX,0,0},
                                            };
 
+
+    SectionLoop *EIT_event_descriptor_loop[5]; /**< TODO: describe */
+    SectionDescriptor *EIT_short_event_descriptor[5]; /**< TODO: describe */
+    QList<LabelLineEdit*> *EIT_short_event_descriptor_widgets[5]; /**< TODO: describe */
+
+
+    QList<StringParam> EIT_short_event_descriptor_items = {{"ISO639_language_code","spa",3},
+                                                          {"event_name","evento epg presente",25},
+                                                          {"text"," Descipcion del evento epg presente",40},
+                                                         };
+
     SectionLoop *EIT_follow_loop[5]; /**< TODO: describe */
     ElementSectionDescriptor *EIT_follow_loop_item[5]; /**< TODO: describe */
     QList<LabelHexSpinBox*> *EIT_follow_elements[5]; /**< TODO: describe */
     QList<IntParam> EIT_follow_items = {{"table_id",0x4E,LabelHexSpinBox::HEXSPINBOX,0x4E,0x4E}, /**< TODO: describe */
-                                 {"service_id",0,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
-                                 {"transport_stream_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
-                                 {"original_network_id",0,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                 {"service_id",80,LabelHexSpinBox::HEXSPINBOX,0x30,0x1FC7},
+                                 {"transport_stream_id",80,LabelHexSpinBox::HEXSPINBOX,0,65535},
+                                 {"original_network_id",80,LabelHexSpinBox::HEXSPINBOX,0,0xFFFF},
                                 };
-
-
 
     SectionLoop *EIT_follow_event_loop[5]; /**< TODO: describe */
     SectionDescriptor *EIT_follow_event_loop_item[5]; /**< TODO: describe */
@@ -578,7 +623,7 @@ private:
                                             {"start_month",QDate::currentDate().month(),LabelHexSpinBox::SPINBOX,0,12},
                                             {"start_day",QDate::currentDate().day(),LabelHexSpinBox::SPINBOX,0,31},
                                             {"start_hours",QTime::currentTime().hour(),LabelHexSpinBox::SPINBOX,0,23},
-                                            {"start_minutes",0,LabelHexSpinBox::SPINBOX,0,59},
+                                            {"start_minutes",30,LabelHexSpinBox::SPINBOX,0,59},
                                             {"start_seconds",0,LabelHexSpinBox::SPINBOX,0,59},
                                             {"duration_hours",0,LabelHexSpinBox::SPINBOX,0,23},
                                             {"duration_minutes",30,LabelHexSpinBox::SPINBOX,0,59},

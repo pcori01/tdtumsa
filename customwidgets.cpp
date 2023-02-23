@@ -16,9 +16,10 @@ LabelHexSpinBox::LabelHexSpinBox(QWidget *parent, QString text, int value) : QWi
                 connect(this,SIGNAL(valueChanged(int)),m_QSpinBox,SLOT(setValue(int)));
     this->setLayout(m_HBoxLayout);
 }
-void LabelHexSpinBox::setRange(int value1,int value2)
+void LabelHexSpinBox::setRange(int value1,unsigned int value2)
 {
     (type==0)?m_HexSpinBox->setRange(value1,value2):m_QSpinBox->setRange(value1,value2);
+    (type==0)?m_HexSpinBox->setMAXRange(value2):m_QSpinBox->setRange(value1,value2);
 }
 
 SectionDescriptor::SectionDescriptor(QWidget *parent, QString text)
@@ -75,7 +76,7 @@ LabelLineEdit::LabelLineEdit(QWidget *parent, QString text)
     m_LineEdit = new QLineEdit;
     m_Label->setBuddy(m_LineEdit);
     m_HBoxLayout = new QHBoxLayout;
- // m_HBoxLayout->setSizeConstraint(QLayout::SetFixedSize);
+    m_HBoxLayout->setSizeConstraint(QLayout::SetFixedSize);
     m_HBoxLayout->addWidget(m_Label);
     m_HBoxLayout->addWidget(m_LineEdit);
     connect(m_LineEdit,SIGNAL(textChanged(QString)),this,SLOT(setText(QString)));
@@ -83,4 +84,9 @@ LabelLineEdit::LabelLineEdit(QWidget *parent, QString text)
 
     this->setLayout(m_HBoxLayout);
 }
+void LabelLineEdit::setLength(int length){
+    m_LineEdit->setMaxLength(length);
+    m_LineEdit->setMaximumWidth(11*length);
+    m_LineEdit->setMinimumWidth(11*length);
 
+}
