@@ -80,8 +80,6 @@ void IntroPage::notifyFileLoad()
 PlanPage::PlanPage(QWidget *parent)
     : QWizardPage(parent)
 {
-    registerField("indexPlan",this,"indexPlan");
-    registerField("SevicesPlan",this,"SevicesPlan");
 
     setTitle(tr("Planificacion Radioelectrica"));
     setSubTitle(tr("Seleccione el Tipo de Planificación que desea utilizar "
@@ -98,6 +96,10 @@ PlanPage::PlanPage(QWidget *parent)
                 optionRadioButton[i] = new QRadioButton;
                 layout->addWidget(optionRadioButton[i], i+1, 1);
                 QString namefield = "option"+QVariant(i).toString();
+                /************************************************
+                 *  ... Registrar Para Almacenamiento
+                 * Valor de Casilla one-seg
+                 ***********************************************/
                 registerField("option"+QVariant(i).toString(), optionRadioButton[i]);
            }
 
@@ -107,6 +109,16 @@ PlanPage::PlanPage(QWidget *parent)
     optionRadioButton[2]->setText(tr("2 Servicios HD"));
     optionRadioButton[3]->setText(tr("1 Servicio HD + 2 Servicios SD"));
     optionRadioButton[4]->setText(tr("4 Servicios SD"));
+
+    /************************************************
+     *  ... Registrar Para Almacenamiento
+     * Cantidad de Servicios
+     * Modelos de Planificaion Seleccionado
+     ***********************************************/
+
+    registerField("indexPlan",this,"indexPlan");
+    registerField("SevicesPlan",this,"SevicesPlan");
+
 
     setLayout(layout);
 }
@@ -123,6 +135,9 @@ void PlanPage::cleanupPage()
 
 bool PlanPage::validatePage()
 {
+    /************************************************
+     *  ... Recuperar Modelo de Planificaion
+     ***********************************************/
     if(field("option0").toBool())
     {
         setindexPlan(0);
@@ -176,6 +191,9 @@ CodePage::CodePage(QWidget *parent)
         Videolayout[i]=new QGridLayout;
         Audiolayout[i]=new QGridLayout;
         Gingalayout[i]=new QGridLayout;
+        /************************************************
+         *  ... Layout de elementos
+         ***********************************************/
 
         File[i]=new QGroupBox(tr("Parametros de Video"));
         File[i]->setLayout(Filelayout[i]);
@@ -195,6 +213,9 @@ CodePage::CodePage(QWidget *parent)
 
         tabWidget[i]=new QWidget;
         CodeTab->addTab(tabWidget[i], tr("Servicio"));
+        /************************************************
+         *  ... Definir Parametros de Video
+         ***********************************************/
 
         videoLabel[i] = new QLabel(tr("&Archivo \nde Video:"));
         videoLineEdit[i] = new QLineEdit;        
@@ -225,7 +246,9 @@ CodePage::CodePage(QWidget *parent)
         registerField("VideoRA"+QVariant(i).toString(),videoRAComboBox[i],"currentText",SIGNAL(valueChanged(int)));
         registerField("VideoPerfil"+QVariant(i).toString(),videoPerfilComboBox[i],"currentText",SIGNAL(valueChanged(int)));
         registerField("VideoLevel"+QVariant(i).toString(),videoNivelComboBox[i],"currentText",SIGNAL(valueChanged(int)));
-
+        /************************************************
+         *  ... Definir Parametros de Audio
+         ***********************************************/
         audioBitrateLabel[i] = new QLabel(tr("Bitrate \nAudio [Kbps]:"));
         audioSlider[i] = new QSlider(Qt::Horizontal);
         audioSlider[i]->setMaximumWidth(80);
@@ -242,18 +265,20 @@ CodePage::CodePage(QWidget *parent)
         registerField("AudioChannels"+QVariant(i).toString(),aChanelsComboBox[i],"currentText",SIGNAL(valueChanged(int)));
         registerField("AudioPerfil"+QVariant(i).toString(),aCodecComboBox[i],"currentText",SIGNAL(valueChanged(int)));
         registerField("AudioSampleRate"+QVariant(i).toString(),aSampleRateComboBox[i],"currentText",SIGNAL(valueChanged(int)));
-
+        /************************************************
+         *  ... Definir Parametros de Ginga
+         ***********************************************/
         GingaLabel[i] = new QLabel(tr("Archivo \nde Ginga:"));
-        GingaRateLabel[i] = new QLabel(tr("BitRate \nde Ginga [Mbps]:"));
+        GingaRateLabel[i] = new QLabel(tr("BitRate \nde Ginga [Kbps]:"));
 
         GingaLineEdit[i] = new QLineEdit;
         registerField("GingaAppDir"+QVariant(i).toString(), GingaLineEdit[i]);
         GingaLabel[i]->setBuddy(GingaLineEdit[i]);
         GingaSlider[i] = new DoubleSlider;
-        GingaSlider[i]->setRange(4,40);
+        GingaSlider[i]->setRange(80,22000);
         GingaSlider[i]->setSingleStep(1);
         GingaSpinBox[i] = new QDoubleSpinBox;
-        GingaSpinBox[i]->setRange(0.4,4.0);
+        GingaSpinBox[i]->setRange(8.0,2200.0);
         registerField("GingaBitRate"+QVariant(i).toString(), GingaSpinBox[i],"value","valueChanged");
 
         GingaButton[i] = new QPushButton(tr("Buscar"));
@@ -299,6 +324,9 @@ CodePage::CodePage(QWidget *parent)
         Gingalayout[i]->addWidget(GingaRateLabel[i],1,0);
         Gingalayout[i]->addWidget(GingaSlider[i],1,1);
         Gingalayout[i]->addWidget(GingaSpinBox[i],1,2);
+        /************************************************
+         *  ... Conectar valores Relacionados
+         ***********************************************/
 
         connect(videoSlider[i],SIGNAL(valueChanged(int)),videoSlider[i],SLOT(notifyValueChanged(int)));
         connect(videoSlider[i],SIGNAL(doubleValueChanged(double)),videoSpinBox[i],SLOT(setValue(double)));
@@ -358,6 +386,9 @@ CodePage::CodePage(QWidget *parent)
         audioSpinBox[0]->setSingleStep(1);
         audioSlider[0]->setRange(24,32);
         audioSlider[0]->setSingleStep(10);
+        GingaSpinBox[0]->setRange(8.0,650.0);
+        GingaSlider[0]->setRange(80,6500);
+
 
         CodeTab->setTabText(0,tr("Servicio One-Seg"));
 }
@@ -1013,6 +1044,9 @@ MuxPage::MuxPage(QWidget *parent)
 
         }
 
+
+
+
         layoutTab[3*i+6]->setSizeConstraint(QLayout::SetFixedSize);
 
         AITApptype[i]=new LabelHexSpinBox(this,"App Type");
@@ -1631,7 +1665,27 @@ void FinalPage::initializePage()
                      "        hour = ((current_time[3] / 10) * 16) + (current_time[3] % 10), # it requires decimal time in hex... like 0x22 for 10 p.m.\n"
                      "        minute = ((current_time[4] / 10) * 16) + (current_time[4] % 10),\n"
                      "        second = ((current_time[5] / 10) * 16) + (current_time[5] % 10),\n"
-                     "        descriptor_loop = [],\n"
+                     "        descriptor_loop = [\n"
+                     "            local_time_offset_descriptor (\n"
+                     "                local_time_offset_loop = [\n"
+                     "                    local_time_offset_loop_item (\n"
+                     "                        ISO_639_language_code = \"BOL\",\n"
+                     "                        country_region_id = "+field("country_region_id").toString()+",\n"
+                     "                        local_time_offset_polarity = "+field("local_time_offset_polarity").toString()+",\n"
+                     "                        local_time_offset_hour = "+field("local_time_offset_hour").toString()+",\n"
+                     "                        local_time_offset_minute = "+field("local_time_offset_minute").toString()+",\n"
+                     "                        year_of_change = "+field("year_of_change").toString()+",\n"
+                     "                        month_of_change = "+field("month_of_change").toString()+",\n"
+                     "                        day_of_change = "+field("day_of_change").toString()+",\n"
+                     "                        hour_of_change = "+field("hour_of_change").toString()+",\n"
+                     "                        minute_of_change = "+field("minute_of_change").toString()+",\n"
+                     "                        second_of_change = "+field("second_of_change").toString()+",\n"
+                     "                        next_time_offset_hour = "+field("next_time_offset_hour").toString()+",\n"
+                     "                        next_time_offset_minute = "+field("next_time_offset_minute").toString()+",\n"
+                     "                    ),\n"
+                     "                ],\n"
+                     "            ),\n"
+                     "        ],\n"
                      ")\n\n"
                      "out = open(\"./tot.sec\", \"wb\")\n"
                      "out.write(tot.pack())\n"

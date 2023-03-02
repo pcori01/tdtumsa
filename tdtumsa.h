@@ -405,18 +405,18 @@ private:
     SectionDescriptor *TOT_local_time_offset_descriptor;
     LabelLineEdit *TOT_ISO_639_language_code;
     QList<LabelHexSpinBox*> *TOT_local_time_offset_descriptor_Widgets; /**< TODO: describe */
-    QList<IntParam> TOT_local_time_offset_descriptor_item = {{"country_region_id",0x0C,LabelHexSpinBox::HEXSPINBOX,0,0xFF}, /**< TODO: describe */
-                                                               {"local_time_offset_polarity",0,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFF},
-                                                               {"local_time_offset_hour",0,LabelHexSpinBox::HEXSPINBOX,5,0xfff}, /**< TODO: describe */
-                                                               {"local_time_offset_minute",0x8000000,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
-                                                               {"year_of_change",0xFFFFFF,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
-                                                               {"month_of_change",0,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFF},
-                                                               {"day_of_change",0,LabelHexSpinBox::HEXSPINBOX,5,0xfff}, /**< TODO: describe */
-                                                               {"hour_of_change",0x8000000,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
-                                                               {"minute_of_change",0xFFFFFF,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
+    QList<IntParam> TOT_local_time_offset_descriptor_item = {{"country_region_id",0x0,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFF}, /**< TODO: describe */
+                                                               {"local_time_offset_polarity",1,LabelHexSpinBox::HEXSPINBOX,0,1},
+                                                               {"local_time_offset_hour",4,LabelHexSpinBox::HEXSPINBOX,0,13}, /**< TODO: describe */
+                                                               {"local_time_offset_minute",0,LabelHexSpinBox::HEXSPINBOX,0,59},
+                                                               {"year_of_change",0,LabelHexSpinBox::HEXSPINBOX,0,0xFFFF},
+                                                               {"month_of_change",1,LabelHexSpinBox::HEXSPINBOX,1,12},
+                                                               {"day_of_change",1,LabelHexSpinBox::HEXSPINBOX,1,31}, /**< TODO: describe */
+                                                               {"hour_of_change",0,LabelHexSpinBox::HEXSPINBOX,0,23},
+                                                               {"minute_of_change",0,LabelHexSpinBox::HEXSPINBOX,0,59},
                                                                {"second_of_change",0,LabelHexSpinBox::HEXSPINBOX,5,0xfff}, /**< TODO: describe */
-                                                               {"next_time_offset_hour",0x8000000,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
-                                                               {"next_time_offset_minute",0xFFFFFF,LabelHexSpinBox::HEXSPINBOX,0x0,0xFFFFFFFF},
+                                                               {"next_time_offset_hour",4,LabelHexSpinBox::HEXSPINBOX,0,13},
+                                                               {"next_time_offset_minute",0,LabelHexSpinBox::HEXSPINBOX,0,59},
                                                               };
 
 
@@ -598,8 +598,6 @@ private:
     SectionLoop *EIT_event_descriptor_loop[5]; /**< TODO: describe */
     SectionDescriptor *EIT_short_event_descriptor[5]; /**< TODO: describe */
     QList<LabelLineEdit*> *EIT_short_event_descriptor_widgets[5]; /**< TODO: describe */
-
-
     QList<StringParam> EIT_short_event_descriptor_items = {{"ISO639_language_code","spa",3},
                                                           {"event_name","evento epg presente",25},
                                                           {"text"," Descipcion del evento epg presente",40},
@@ -631,6 +629,14 @@ private:
                                             {"running_status",4,LabelHexSpinBox::HEXSPINBOX,0,7},
                                             {"free_CA_mode",0,LabelHexSpinBox::HEXSPINBOX,0,0},
                                            };
+
+    SectionLoop *EIT_follow_event_descriptor_loop[5]; /**< TODO: describe */
+    SectionDescriptor *EIT_follow_short_event_descriptor[5]; /**< TODO: describe */
+    QList<LabelLineEdit*> *EIT_follow_short_event_descriptor_widgets[5]; /**< TODO: describe */
+    QList<StringParam> EIT_follow_short_event_descriptor_items = {{"ISO639_language_code","spa",3},
+                                                                  {"event_name","evento epg presente",25},
+                                                                  {"text"," Descipcion del evento epg presente",40},
+                                                                 };
 
 public slots:
     /**
