@@ -2,6 +2,11 @@
 
 #include "tdtumsa.h"
 
+/**
+ * @brief
+ *
+ * @param parent
+ */
 Tdtumsa::Tdtumsa(QWidget *parent)
     : QWizard(parent)
 {
@@ -22,6 +27,11 @@ Tdtumsa::Tdtumsa(QWidget *parent)
 
 }
 
+/**
+ * @brief
+ *
+ * @param parent
+ */
 IntroPage::IntroPage(QWidget *parent)
     : QWizardPage(parent)
 {
@@ -60,23 +70,41 @@ IntroPage::IntroPage(QWidget *parent)
     registerField("WorkDirectory", WorkDirectory,"text");
 }
 
+/**
+ * @brief
+ *
+ * @return int
+ */
 int IntroPage::nextId() const
 
 {
      return Tdtumsa::Page_Plan;
 }
 
+/**
+ * @brief
+ *
+ */
 void IntroPage::initializePage()
 
 {
 }
 
+/**
+ * @brief
+ *
+ */
 void IntroPage::notifyFileLoad()
 {
     QString Path = QFileDialog::getExistingDirectory(this,tr("Seleccionar Directorio de Trabajo"), "");
     WorkDirectory->setText(Path);
 }
 
+/**
+ * @brief
+ *
+ * @param parent
+ */
 PlanPage::PlanPage(QWidget *parent)
     : QWizardPage(parent)
 {
@@ -123,16 +151,29 @@ PlanPage::PlanPage(QWidget *parent)
     setLayout(layout);
 }
 
+/**
+ * @brief
+ *
+ */
 void PlanPage::initializePage()
 
 {
 
 }
 
+/**
+ * @brief
+ *
+ */
 void PlanPage::cleanupPage()
 {
 }
 
+/**
+ * @brief
+ *
+ * @return bool
+ */
 bool PlanPage::validatePage()
 {
     /************************************************
@@ -166,11 +207,21 @@ bool PlanPage::validatePage()
     return  true;
 }
 
+/**
+ * @brief
+ *
+ * @return int
+ */
 int PlanPage::nextId() const
 {
     return Tdtumsa::Page_Code;
 }
 
+/**
+ * @brief
+ *
+ * @param parent
+ */
 CodePage::CodePage(QWidget *parent)
     : QWizardPage(parent)
 {
@@ -393,6 +444,10 @@ CodePage::CodePage(QWidget *parent)
         CodeTab->setTabText(0,tr("Servicio One-Seg"));
 }
 
+/**
+ * @brief
+ *
+ */
 void CodePage::initializePage()
 {
     QStringList TabText[5], ResolutionText[5], PerfilText[3], FpsText[5], RA[5];
@@ -482,17 +537,31 @@ void CodePage::initializePage()
     }
 }
 
+/**
+ * @brief
+ *
+ */
 void CodePage::cleanupPage()
 
 {
 }
 
+/**
+ * @brief
+ *
+ * @return int
+ */
 int CodePage::nextId() const
 {
       return Tdtumsa::Page_Mux;
 }
 
 
+/**
+ * @brief
+ *
+ * @return bool
+ */
 bool CodePage::validatePage()
 
 {
@@ -561,10 +630,16 @@ void CodePage::notifyFileLoad()
 }
 
 
+/**
+ * @brief
+ *
+ */
 void CodePage::notifyAudioChanges()
 {
 
-        int index=CodeTab->currentIndex()+1;
+        int index=CodeTab->currentIndex();
+        (field("1seg").toBool())?index:index++;
+
         QVector<int> AudioBitratemin[2][2], AudioBitratemax[2][2],
                 Audio1sBitrate[2];
 
@@ -588,7 +663,6 @@ void CodePage::notifyAudioChanges()
             audioSpinBox[0]->setRange(Audio1sBitrate[0][aSampleRateComboBox[0]->currentIndex()],
                                     Audio1sBitrate[1][aSampleRateComboBox[0]->currentIndex()]);
         }
-
         else if((this->sender()!=aSampleRateComboBox[0])&&(this->sender()!=aCodecComboBox[0]))
         {
             audioSlider[index]->setRange(AudioBitratemin[aSampleRateComboBox[index]->currentIndex()][aCodecComboBox[index]->currentIndex()][aChanelsComboBox[index]->currentIndex()]
@@ -598,6 +672,11 @@ void CodePage::notifyAudioChanges()
         }
     }
 
+/**
+ * @brief
+ *
+ * @param parent
+ */
 MuxPage::MuxPage(QWidget *parent)
     : QWizardPage(parent)
 {
@@ -698,8 +777,14 @@ MuxPage::MuxPage(QWidget *parent)
     NITTerrestrialDeliverySystemDesc = new SectionDescriptor(this,tr("terrestrial delivery system descriptor"));
     NITTSTransportDescLoop->layout()->addWidget(NITTerrestrialDeliverySystemDesc);
 
-    NITAreaCode =new LabelHexSpinBox(this,tr("Area Code"));
-    NITTerrestrialDeliverySystemDesc->layout()->addWidget(NITAreaCode);
+    NITTerrestrialDeliverySystemDesc_widgets= new QList<LabelHexSpinBox*>;
+    foreach (const IntParam &item, NITTerrestrialDeliverySystemDesc_item) {
+        NITTerrestrialDeliverySystemDesc_widgets->append(new LabelHexSpinBox(this,item.name,item.type));
+        NITTerrestrialDeliverySystemDesc_widgets->last()->setRange(item.min,item.max);
+        NITTerrestrialDeliverySystemDesc_widgets->last()->setValue(item.value);
+        NITTerrestrialDeliverySystemDesc->layout()->addWidget(NITTerrestrialDeliverySystemDesc_widgets->last());
+        registerField(item.name,NITTerrestrialDeliverySystemDesc_widgets->last(),"value");
+    }
 
     transport_stream_information_descriptor = new SectionLoop(this,tr("Transport Stream Information Descriptor"));
     NITTSTransportDescLoop->layout()->addWidget(transport_stream_information_descriptor);
@@ -1013,6 +1098,8 @@ MuxPage::MuxPage(QWidget *parent)
             EIT_short_event_descriptor_widgets[i]->last()->setText(item.text);
             EIT_short_event_descriptor_widgets[i]->last()->setLength(item.length);
             EIT_short_event_descriptor[i]->layout()->addWidget(EIT_short_event_descriptor_widgets[i]->last());
+            registerField(item.name+QVariant(i).toString(),EIT_short_event_descriptor_widgets[i]->last(),"text");
+
         }
 
         EIT_follow_loop[i]=new SectionLoop(this,tr("EIT Siguiente"));
@@ -1044,7 +1131,23 @@ MuxPage::MuxPage(QWidget *parent)
 
         }
 
+        EIT_follow_event_descriptor_loop[i] = new SectionLoop(this,"Event Loop Descriptor"); /**< TODO: describe */
+        EIT_follow_event_descriptor_loop[i]->setMaximumWidth(3000);
+        EIT_follow_event_loop[i]->layout()->addWidget(EIT_follow_event_descriptor_loop[i]);
 
+        EIT_follow_short_event_descriptor[i] = new SectionDescriptor(this,tr("Short Event Descriptor")); /**< TODO: describe */
+        EIT_follow_short_event_descriptor[i]->setMaximumWidth(1200);
+        EIT_follow_event_descriptor_loop[i]->layout()->addWidget(EIT_follow_short_event_descriptor[i]);
+        EIT_follow_short_event_descriptor_widgets[i]= new QList<LabelLineEdit*>;
+
+        foreach(StringParam item, EIT_follow_short_event_descriptor_items){
+            EIT_follow_short_event_descriptor_widgets[i]->append(new LabelLineEdit(this,item.name));
+            EIT_follow_short_event_descriptor_widgets[i]->last()->setText(item.text);
+            EIT_follow_short_event_descriptor_widgets[i]->last()->setLength(item.length);
+            EIT_follow_short_event_descriptor[i]->layout()->addWidget(EIT_follow_short_event_descriptor_widgets[i]->last());
+            registerField("follow_"+item.name+QVariant(i).toString(),EIT_follow_short_event_descriptor_widgets[i]->last(),"text");
+
+        }
 
 
         layoutTab[3*i+6]->setSizeConstraint(QLayout::SetFixedSize);
@@ -1108,14 +1211,18 @@ MuxPage::MuxPage(QWidget *parent)
         AITApp_descriptors_loop[i]->layout()->addWidget(AITApp_name_descriptor[i]);
         AITapplication_name[i]= new LabelLineEdit(this,tr("application_name"));
         AITApp_name_descriptor[i]->layout()->addWidget(AITapplication_name[i]);
+        AITapplication_name[i]->setText("APP_GINGA");
 
         ginga_ncl_application_location_descriptor[i]= new SectionDescriptor(this,tr("ginga_ncl_application_location_descriptor"));
         AITApp_descriptors_loop[i]->layout()->addWidget(ginga_ncl_application_location_descriptor[i]);
         AITbase_directory[i]= new LabelLineEdit(this,tr("base_directory"));
+        AITbase_directory[i]->setText("\\");
         ginga_ncl_application_location_descriptor[i]->layout()->addWidget(AITbase_directory[i]);
         class_path_extension[i]= new LabelLineEdit(this,tr("class_path_extension"));
+        class_path_extension[i]->setText("\\");
         ginga_ncl_application_location_descriptor[i]->layout()->addWidget(class_path_extension[i]);
         initial_class[i]= new LabelLineEdit(this,tr("initial_class"));
+        initial_class[i]->setText("main.ncl");
         ginga_ncl_application_location_descriptor[i]->layout()->addWidget(initial_class[i]);
 
         connect(PATServiceID[i],SIGNAL(valueChanged(int)),
@@ -1152,13 +1259,26 @@ MuxPage::MuxPage(QWidget *parent)
 }
 
 
+/**
+ * @brief
+ *
+ * @return int
+ */
 int MuxPage::nextId() const{
     return Tdtumsa::Page_Final;
 }
+/**
+ * @brief
+ *
+ */
 void MuxPage::cleanupPage(){
 
 }
 
+/**
+ * @brief
+ *
+ */
 void MuxPage::initializePage(){
     int index = 0, nservice = 0;
     QStringList TabText[5];
@@ -1231,6 +1351,11 @@ void MuxPage::initializePage(){
     }
 }
 
+/**
+ * @brief
+ *
+ * @param value
+ */
 void MuxPage::MuxChanges(int value)
 {
     if(this->sender()==NITNetworkID){
@@ -1262,6 +1387,11 @@ void MuxPage::MuxChanges(int value)
 }
 
 
+/**
+ * @brief
+ *
+ * @return bool
+ */
 bool MuxPage::validatePage()
 {
     QStringList PIDs;
@@ -1276,6 +1406,11 @@ bool MuxPage::validatePage()
 }
 
 
+/**
+ * @brief
+ *
+ * @param parent
+ */
 FinalPage::FinalPage(QWidget *parent)
     : QWizardPage(parent)
 {
@@ -1304,6 +1439,10 @@ FinalPage::FinalPage(QWidget *parent)
     layout->itemAt(1)->setAlignment(Qt::AlignHCenter);
 }
 
+/**
+ * @brief
+ *
+ */
 void FinalPage::execute()
 {
     QString uname = qgetenv("USER");
@@ -1360,6 +1499,10 @@ void FinalPage::execute()
     myProcess->start(program,arguments);
 
 }
+/**
+ * @brief
+ *
+ */
 void FinalPage::initializePage()
 {
     QString strCodeMux,auxString1,auxString2;
@@ -1489,7 +1632,7 @@ void FinalPage::initializePage()
     strTables.append("\nclass AAC_descriptor(Descriptor):\n    descriptor_tag = 0x7C\n\n    def bytes(self):\n        for property, value in vars(self).iteritems():\n            if not property in ['additional_info', 'AAC_type','profile_and_level']:\n                print \"WARN: unrecognized attribute \", property, \" in object \", self\n        stream = pack( \"!B\", self.profile_and_level)\n        if hasattr (self, 'AAC_type') | hasattr (self, 'additional_info'):\n            if hasattr (self, 'AAC_type'):\n                stream += pack(\"BB\", 0xFF, self.AAC_type)\n            else:\n                stream += pack(\"B\", 0x7F)\n            if hasattr (self, 'additional_info'):\n                stream += pack(\"%ds\" % len(self.additional_info), self.additional_info)\n        return stream\n");
     strTables.append("tvd_ts_id = "+field("Transport Stream ID").toString()+"\n"
                      "tvd_orig_network_id = "+field("Transport Stream ID").toString()+"\n"
-                     "ts_freq = 497\n"
+                     "ts_freq = "+field("frecuency").toString()+"\n"
                      "ts_virtual_channel_key = "+field("remote control key id").toString()+"\n"
                      "tvd_network_name = \""+field("Network Name").toString()+"\"\n"
                      "tvd_ts_name = \"UMSA TS\"\n");
@@ -1571,9 +1714,9 @@ void FinalPage::initializePage()
     strTables.append("					],\n"
                      "				),\n"
                      "                terrestrial_delivery_system_descriptor(\n"
-                     "                    area_code = 1341,\n"
-                     "                    guard_interval = 0x01,\n"
-                     "                    transmission_mode = 0x02,\n"
+                     "                    area_code = "+field("area_code").toString()+",\n"
+                     "                    guard_interval = "+field("guard_interval").toString()+",\n"
+                     "                    transmission_mode = "+field("transmission_mode").toString()+",\n"
                      "                    frequencies = [\n"
                      "                        tds_frequency_item(\n"
                      "                            freq=ts_freq\n"
@@ -1834,8 +1977,8 @@ void FinalPage::initializePage()
                          "		event_descriptor_loop = [\n"
                          "		    short_event_descriptor (\n"
                          "			ISO639_language_code = \"SPA\", \n"
-                         "			event_name = \"epg event name\",\n"
-                         "			text = \"this is an epg event text example\",\n"
+                         "			event_name = \""+field("event_name"+auxString2).toString()+"\",\n"
+                         "			text = \""+field("text"+auxString2).toString()+"\",\n"
                          "		    ),\n"
                          "		],\n"
                          "	    ),	    	\n"
@@ -1870,8 +2013,8 @@ void FinalPage::initializePage()
                          "		event_descriptor_loop = [\n"
                          "		    short_event_descriptor (\n"
                          "			ISO639_language_code = \"SPA\", \n"
-                         "			event_name = \"epg event name 2\",\n"
-                         "			text = \"this is the following text example\", \n"
+                         "			event_name = \""+field("follow_event_name"+auxString2).toString()+"\",\n"
+                         "			text = \""+field("follow_text"+auxString2).toString()+"\", \n"
                          "		    )    \n"
                          "		],\n"
                          "	    ),\n"
