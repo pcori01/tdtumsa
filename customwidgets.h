@@ -28,7 +28,7 @@ public:
      * @param int
      * @param int
      */
-    void setRange(int,unsigned int);
+    void setRange(int,int);
     const static int HEXSPINBOX = 0; /**< TODO: describe */
     const static int SPINBOX = 1; /**< TODO: describe */
     /**

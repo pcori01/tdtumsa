@@ -22,7 +22,7 @@ Tdtumsa::Tdtumsa(QWidget *parent)
 #endif
     setPixmap(QWizard::LogoPixmap, QPixmap(":/images/logo.png"));
 
-    setWindowTitle(tr("Televisión Dígital UMSA"));
+    setWindowTitle(tr("Televisión Digital Terrestre - UMSA"));
     setMinimumSize(14*77,9*77);
 
 }
@@ -420,13 +420,13 @@ CodePage::CodePage(QWidget *parent)
         aSampleRateComboBox[0]->addItems(QStringList() << "32000");
         aChanelsComboBox[0]->clear();
         aChanelsComboBox[0]->addItem("2");
-        vResolutionComboBox[0]->addItems({"cif","qvga","qqvga"});
+        vResolutionComboBox[0]->addItems({"qvga"});
         videoFPSComboBox[0]->addItems({"5000/1001","10000/1001","12000/1001","15000/1001","24000/1001","30000/1001"});
         aCodecComboBox[0]->clear();
         aCodecComboBox[0]->addItem(tr("aac_he_v2"));
         videoBitrateLabel[0]->setText(tr("Bitrate \nVideo [Kbps]:"));
-        videoSlider[0]->setRange(640,7680);
-        videoSpinBox[0]->setRange(64.0,768.0);
+        videoSlider[0]->setRange(640,3840);
+        videoSpinBox[0]->setRange(64.0,384.0);
         videoSpinBox[0]->setSingleStep(1.0);
         videoSlider[0]->setSingleStep(10);
         videoRAComboBox[0]->addItems({"16:9","4:3"});
@@ -933,17 +933,33 @@ MuxPage::MuxPage(QWidget *parent)
 
         layoutTab[3*i+4]->addWidget(PMTProgramNumber[i]);
 
+        PMTProgram_info_descriptor_loop[i] = new SectionLoop(this,"Program info descriptors Loop");
+
         PMTStreamLoop[i] = new SectionLoop(this,"Stream Loop");
         PMTVideo[i] = new SectionDescriptor(this,"Video");
         PMTAudio[i] = new SectionDescriptor(this,"Audio");
         PMTAIT[i] = new SectionLoop(this,"AIT Stream");
         PMTDSMCC[i] = new SectionLoop(this,"DSMCC Stream");
 
+        layoutTab[3*i+4]->addWidget(PMTProgram_info_descriptor_loop[i]);
         layoutTab[3*i+4]->addWidget(PMTStreamLoop[i]);
         PMTStreamLoop[i]->layout()->addWidget(PMTVideo[i]);
         PMTStreamLoop[i]->layout()->addWidget(PMTAudio[i]);
         PMTStreamLoop[i]->layout()->addWidget(PMTAIT[i]);
         PMTStreamLoop[i]->layout()->addWidget(PMTDSMCC[i]);
+
+
+        PMTparental_rating_descriptor[i] = new SectionDescriptor(this,"parental_rating_descriptor");
+        PMTparental_rating_descriptorWidgetItem[i] = new QList<LabelHexSpinBox*>;
+        foreach (const IntParam &item, PMTparental_rating_descriptor_item) {
+            PMTparental_rating_descriptorWidgetItem[i]->append(new LabelHexSpinBox(this,item.name));
+            PMTparental_rating_descriptorWidgetItem[i]->last()->setRange(item.min,item.max);
+            PMTparental_rating_descriptorWidgetItem[i]->last()->setValue(item.value);
+            PMTparental_rating_descriptor[i]->layout()->addWidget(PMTparental_rating_descriptorWidgetItem[i]->last());
+            registerField(item.name+QVariant(i).toString(),PMTparental_rating_descriptorWidgetItem[i]->last(),"value");
+        }
+
+        PMTProgram_info_descriptor_loop[i]->layout()->addWidget(PMTparental_rating_descriptor[i]);
 
         for(int it=0;it<2;it++){
             PMTVideoItem[i][it]= new LabelHexSpinBox(this,PMTStreamLoopText[0][it]);
@@ -1494,7 +1510,7 @@ void FinalPage::execute()
 
     QString program = "gnome-terminal";
     QStringList arguments;
-    arguments <<"-e"<<path + "/script.sh";
+    arguments <<"-e"<<"\""+path + "\"/script.sh";
     QProcess *myProcess = new QProcess;
     myProcess->start(program,arguments);
 
@@ -1521,7 +1537,7 @@ void FinalPage::initializePage()
 
     }
     bitratetotal=bitratetotal*1.15;
-    strCodeMux.append("cd "+field("WorkDirectory").toString());
+    strCodeMux.append("cd \""+field("WorkDirectory").toString()+"\"");
 
     strCodeMux.append("\npython tables.py\n");
     QString PathVideo, LetterDisk;
@@ -1602,7 +1618,7 @@ void FinalPage::initializePage()
             bitratetotal+=field("VideoBitRate"+auxString2).toInt()*(1000000);
         }
         if(field("GingaApp"+auxString2).toBool())
-            strCodeMux.append("b:"+QString("%1").arg(int(field("GingaBitRate"+auxString2).toFloat()*(1000000.0)))+" app_ginga"+auxString1+".ts "
+            strCodeMux.append("b:"+QString("%1").arg(int(field("GingaBitRate"+auxString2).toFloat()*(1000.0)))+" app_ginga"+auxString1+".ts "
                                "b:3008 ait"+auxString1+".ts ");
 
         bitratetotal+=field("AudioBitRate"+auxString2).toInt()*(1000);
@@ -1612,7 +1628,7 @@ void FinalPage::initializePage()
     strCodeMux.append(QString("c:%1 AVmodded.ts o:29958294 null.ts > preout.ts\n").arg(bitratetotal));
  // strCodeMux.append("tstdt preout.ts > preout_fixtime.ts\n");
     strCodeMux.append("tspcrstamp preout.ts 29958294 > output.ts\n");
-    strCodeMux.append("nautilus "+field("WorkDirectory").toString()+"\n");
+    strCodeMux.append("nautilus \""+field("WorkDirectory").toString()+"\"\n");
 
     Text[0]->setPlainText(strCodeMux);
     QString strTables;
@@ -1812,7 +1828,7 @@ void FinalPage::initializePage()
                      "            local_time_offset_descriptor (\n"
                      "                local_time_offset_loop = [\n"
                      "                    local_time_offset_loop_item (\n"
-                     "                        ISO_639_language_code = \"BOL\",\n"
+                     "                        ISO_639_language_code = \"SPA\",\n"
                      "                        country_region_id = "+field("country_region_id").toString()+",\n"
                      "                        local_time_offset_polarity = "+field("local_time_offset_polarity").toString()+",\n"
                      "                        local_time_offset_hour = "+field("local_time_offset_hour").toString()+",\n"
@@ -1865,7 +1881,12 @@ void FinalPage::initializePage()
         strTables.append("pmt"+auxString1+" = program_map_section(\n"
                          "	program_number = tvd_service_id_"+auxString1+",\n"
                          "	PCR_PID = "+field("PID Video"+auxString2).toString()+",\n"
-                         "	program_info_descriptor_loop = [],\n"
+                         "	program_info_descriptor_loop = [\n"
+                         "		parental_rating_descriptor(\n"
+                         "			country_code =\"BOL\",\n"
+                         "			rating = 0x10\n"
+                         "		)\n"
+                         "	],\n"
                          "	stream_loop = [\n"
                          "		stream_loop_item(\n"
                          "			stream_type = 0x1B,\n"

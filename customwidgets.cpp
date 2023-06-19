@@ -10,16 +10,16 @@ LabelHexSpinBox::LabelHexSpinBox(QWidget *parent, QString text, int value) : QWi
     m_HBoxLayout->setSizeConstraint(QLayout::SetFixedSize);
     m_HBoxLayout->addWidget(m_Label);
     m_HBoxLayout->addWidget((type==0)?m_HexSpinBox:m_QSpinBox);
+    (type==0)?m_HexSpinBox->setMinimumWidth(90):m_QSpinBox->setMinimumWidth(90);
     (type==0)?connect(m_HexSpinBox,SIGNAL(valueChanged(int)),this,SLOT(setValue(int))):
                connect(m_QSpinBox,SIGNAL(valueChanged(int)),this,SLOT(setValue(int)));
     (type==0)?connect(this,SIGNAL(valueChanged(int)),m_HexSpinBox,SLOT(setValue(int))):
                 connect(this,SIGNAL(valueChanged(int)),m_QSpinBox,SLOT(setValue(int)));
     this->setLayout(m_HBoxLayout);
 }
-void LabelHexSpinBox::setRange(int value1,unsigned int value2)
+void LabelHexSpinBox::setRange(int value1, int value2)
 {
     (type==0)?m_HexSpinBox->setRange(value1,value2):m_QSpinBox->setRange(value1,value2);
-    (type==0)?m_HexSpinBox->setMAXRange(value2):m_QSpinBox->setRange(value1,value2);
 }
 
 SectionDescriptor::SectionDescriptor(QWidget *parent, QString text)

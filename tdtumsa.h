@@ -458,6 +458,13 @@ private:
     QLabel *PMTPCRLabel[5];
     HexSpinBox *PMTPCRHexspinBox[5];
 
+    SectionLoop *PMTProgram_info_descriptor_loop[5];
+
+    SectionDescriptor *PMTparental_rating_descriptor[5];
+    QList<LabelHexSpinBox*> *PMTparental_rating_descriptorWidgetItem[5];
+    QList<IntParam> PMTparental_rating_descriptor_item = {{"country code",0x424F4C,LabelHexSpinBox::HEXSPINBOX,0x424F4C,0x424F4C},
+                                                          {"rating",0x10,LabelHexSpinBox::HEXSPINBOX,0x00,0xFF},
+                                                         };
     SectionLoop *PMTStreamLoop[5];
 
     SectionDescriptor *PMTVideo[5];
@@ -642,8 +649,8 @@ private:
     SectionDescriptor *EIT_follow_short_event_descriptor[5];
     QList<LabelLineEdit*> *EIT_follow_short_event_descriptor_widgets[5];
     QList<StringParam> EIT_follow_short_event_descriptor_items = {{"ISO639_language_code","spa",3},
-                                                                  {"event_name","evento epg presente",25},
-                                                                  {"text"," Descipcion del evento epg presente",40},
+                                                                  {"event_name","evento epg siguiente",25},
+                                                                  {"text"," Descipcion del evento epg siguiente",40},
                                                                  };
 
 public slots:
